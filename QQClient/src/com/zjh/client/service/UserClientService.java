@@ -67,4 +67,19 @@ public class UserClientService {
             e.printStackTrace();
         }
     }
+
+    //安全退出系统
+    public void exit(){
+        //给服务端发送MESSAGE_CLIENT_EXIT类型的message
+        Message message = new Message();
+        message.setSender(u.getUserId());
+        message.setMsgType(MessageType.MESSAGE_CLIENT_EXIT);
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject(message);
+            System.exit(0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

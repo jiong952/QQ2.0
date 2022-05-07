@@ -12,6 +12,10 @@ public class ManageServerConnectClientThread {
     public static void addThread(String userId, ServerConnectClientThread clientConnectServerThread){
         map.put(userId,clientConnectServerThread);
     }
+    //去除用户线程
+    public static void removeThread(String userId){
+        map.remove(userId);
+    }
 
     //获取用户线程
     public static ServerConnectClientThread getThread(String userId){
@@ -28,4 +32,5 @@ public class ManageServerConnectClientThread {
         }
         return onlineUserList.toString();
     }
+
 }

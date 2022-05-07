@@ -63,7 +63,9 @@ public class QQView {
                                     System.out.println("发送文件");
                                     break;
                                 case "9":
-                                    System.out.println("退出系统");
+                                    System.out.println("退出系统成功！");
+                                    //调用userClientService的退出方法
+                                    userClientService.exit();
                                     loop = false;
                                     break;
                             }

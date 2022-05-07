@@ -45,7 +45,14 @@ public class ServerConnectClientThread extends Thread{
                     msg_back.setMsgType(MessageType.MESSAGE_RETURN_ONLINE_FRIEND);
                     ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
                     oos.writeObject(msg_back);
-                }else {
+                }else if(MessageType.MESSAGE_CLIENT_EXIT.equals(msg.getMsgType())){
+                    //客户端退出
+                    System.out.println("用户"+msg.getSender() + "退出");
+                    //在集合中去除客户端
+                    ManageServerConnectClientThread.removeThread(msg.getSender());
+                    socket.close();
+                    break;
+                } else {
                     System.out.println("其他类型消息，暂不处理");
                 }
             } catch (IOException | ClassNotFoundException e) {
