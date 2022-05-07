@@ -46,13 +46,21 @@ public class ServerConnectClientThread extends Thread{
                     ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
                     oos.writeObject(msg_back);
                 }else if(MessageType.MESSAGE_CLIENT_EXIT.equals(msg.getMsgType())){
-                    //客户端退出
+                    //客户端安全退出
                     System.out.println("用户"+msg.getSender() + "退出");
                     //在集合中去除客户端
                     ManageServerConnectClientThread.removeThread(msg.getSender());
                     socket.close();
                     break;
-                } else {
+                }else if(MessageType.MESSAGE_COMMON_MSG.equals(msg.getMsgType())){
+                    //私聊功能
+                    System.out.println("【"+msg.getSendTime()+"】"+msg.getSender() + " 向" + msg.getGetter() + "发送了: "+msg.getContent());
+                    //服务端承担消息转发的作用
+                    //拿到与对应getter通讯的socket，然后发送消息
+                    //这里后期使用数据库可以加一个离线留言功能
+                    ObjectOutputStream oos = new ObjectOutputStream(ManageServerConnectClientThread.getThread(msg.getGetter()).getSocket().getOutputStream());
+                    oos.writeObject(msg);
+                }else {
                     System.out.println("其他类型消息，暂不处理");
                 }
             } catch (IOException | ClassNotFoundException e) {

@@ -19,9 +19,9 @@ public class ServerService {
     private static ConcurrentHashMap<String,User> userHashMap = new ConcurrentHashMap<>();
     static {
         //静态代码块 初始化 validUsers
-        userHashMap.put("admin",new User("admin","123456"));
-        userHashMap.put("张俊鸿",new User("张俊鸿","123456"));
-        userHashMap.put("zjh",new User("zjh","123456"));
+        userHashMap.put("admin",new User("admin","a"));
+        userHashMap.put("张俊鸿",new User("张俊鸿","a"));
+        userHashMap.put("zjh",new User("zjh","a"));
     }
     //用户登录验证
     private boolean checkUser(String userId, String password){

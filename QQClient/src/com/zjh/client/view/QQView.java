@@ -1,11 +1,13 @@
 package com.zjh.client.view;
 
+import com.zjh.client.service.MessageClientService;
 import com.zjh.client.service.UserClientService;
 import com.zjh.common.MessageType;
 import com.zjh.utils.Utility;
 
 public class QQView {
     private UserClientService userClientService = new UserClientService();
+    private MessageClientService messageClientService = new MessageClientService();
     public static void main(String[] args) {
         new QQView().showMenu();
         System.out.println("客户端退出.......");
@@ -57,7 +59,14 @@ public class QQView {
                                     System.out.println("群发消息");
                                     break;
                                 case "3":
-                                    System.out.println("私发消息");
+                                    System.out.println("\n=========私聊界面=========");
+                                    System.out.print("请输入你要聊天的用户（在线的）：");
+                                    //这里目前只能在线用户通讯，后期使用数据库将消息存入数据库后就可以实现离线留言功能
+                                    String getterId = Utility.readString(20); //接收者Id
+                                    System.out.print("请输入发送的内容：");
+                                    String chatContent = Utility.readString(100); //聊天内容
+                                    //调用一个MessageClientService的发送消息
+                                    messageClientService.privateChat(chatContent,userId,getterId);
                                     break;
                                 case "4":
                                     System.out.println("发送文件");

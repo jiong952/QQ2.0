@@ -11,6 +11,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 //参考mvc分层，这里做用户客户端的业务逻辑处理
+/**客户端登录、退出、拉取在线用户业务逻辑**/
 public class UserClientService {
 
     private User u = new User();
