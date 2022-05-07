@@ -1,7 +1,11 @@
 package com.zjh.common;
 
 public interface MessageType {
-    String message_succeed="1"; //登录成功
-    String message_login_fail="2"; //登录失败
-    String message_already_login="3"; //已登录
+    String MESSAGE_SUCCEED ="1"; //登录成功
+    String MESSAGE_LOGIN_FAIL ="2"; //登录失败
+    String MESSAGE_ALREADY_LOGIN ="3"; //已登录
+    String MESSAGE_COMMON_MSG = "4"; //普通信息包
+    String MESSAGE_GET_ONLINE_FRIEND = "5"; //客户端请求拉取在线用户列表
+    String MESSAGE_RETURN_ONLINE_FRIEND = "6"; //服务端返回在线用户列表
+    String MESSAGE_CLIENT_EXIT = "7"; //客户端请求退出
 }

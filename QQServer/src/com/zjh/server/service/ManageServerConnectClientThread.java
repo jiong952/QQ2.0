@@ -1,6 +1,7 @@
 package com.zjh.server.service;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 /** 对登录的用户服务端线程进行统一管理 **/
 public class ManageServerConnectClientThread {
@@ -15,5 +16,16 @@ public class ManageServerConnectClientThread {
     //获取用户线程
     public static ServerConnectClientThread getThread(String userId){
         return map.get(userId);
+    }
+
+    //获取在线用户返回给客户端
+    public static String returnOnlineUserList(){
+        //遍历map返回
+        Iterator<String> iterator = map.keySet().iterator();
+        StringBuilder onlineUserList = new StringBuilder();
+        while (iterator.hasNext()){
+            onlineUserList.append(iterator.next() + " ");
+        }
+        return onlineUserList.toString();
     }
 }

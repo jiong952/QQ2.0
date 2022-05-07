@@ -9,7 +9,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**服务器端业务逻辑处理**/
@@ -24,6 +23,7 @@ public class ServerService {
         userHashMap.put("张俊鸿",new User("张俊鸿","123456"));
         userHashMap.put("zjh",new User("zjh","123456"));
     }
+    //用户登录验证
     private boolean checkUser(String userId, String password){
         boolean b  = false;
         //用户不存在
@@ -59,7 +59,7 @@ public class ServerService {
                     //实现单点登录
                     if(ManageServerConnectClientThread.getThread(user.getUserId()) == null){
                         System.out.println(user.getUserId()+ "登录成功" );
-                        message.setMsgType(MessageType.message_succeed);
+                        message.setMsgType(MessageType.MESSAGE_SUCCEED);
                         oos.writeObject(message);
                         //创建一个线程与登录客户端保持通信
                         ServerConnectClientThread serverConnectClientThread = new ServerConnectClientThread(user.getUserId(), socket);
@@ -70,13 +70,13 @@ public class ServerService {
                     }else {
                         //登录过了
                         System.out.println(user.getUserId()+ "已登录过");
-                        message.setMsgType(MessageType.message_already_login);
+                        message.setMsgType(MessageType.MESSAGE_ALREADY_LOGIN);
                         oos.writeObject(message);
                     }
                 }else {
                     //账号名或密码错误
                     System.out.println(user.getUserId()+ "登录失败" );
-                    message.setMsgType(MessageType.message_login_fail);
+                    message.setMsgType(MessageType.MESSAGE_LOGIN_FAIL);
                     oos.writeObject(message);
                     socket.close();
                 }
