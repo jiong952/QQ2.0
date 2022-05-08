@@ -4,6 +4,7 @@ import com.zjh.common.Message;
 import com.zjh.common.MessageType;
 import com.zjh.common.User;
 import com.zjh.server.service.thread.ManageServerConnectClientThread;
+import com.zjh.server.service.thread.SendNewsThread;
 import com.zjh.server.service.thread.ServerConnectClientThread;
 
 import java.io.IOException;
@@ -58,8 +59,11 @@ public class ServerService {
     public ServerService() {
         //服务端在9999端口监听
         try {
-            System.out.println("服务端在9999端口监听");
-            serverSocket = new ServerSocket(9999);
+            System.out.println("服务器端启动.....");
+            System.out.println("服务端在9998端口监听");
+            serverSocket = new ServerSocket(9998);
+            //启动推送服务
+            new SendNewsThread().start();
             //持续监听多用户
             while (true){
                 Socket socket = serverSocket.accept();

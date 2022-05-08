@@ -17,4 +17,6 @@ public interface MessageType {
     String MESSAGE_TO_ALL_MSG = "8"; //群发信息包
     String MESSAGE_GROUP_CHAT = "9"; //群聊信息包
     String MESSAGE_FILE = "10"; //文件信息包
+    String MESSAGE_NEWS = "11"; //服务端推送消息
+
 }

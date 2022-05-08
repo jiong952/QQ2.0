@@ -65,6 +65,10 @@ public class ClientConnectServerThread extends Thread{
                     String desc = "D:\\" + msg.getGetter() + "_" + msg.getFileMsg().getFileName() + "_" + new Date().toString();
                     FileUtils.storeFile(msg.getFileMsg().getFileBytes(),desc);
                     System.out.println(msg.getFileMsg().getFileName()+ " 已保存到" + desc);
+                }else if(MessageType.MESSAGE_NEWS.equals(msg.getMsgType())){
+                    //服务端推送的消息
+                    System.out.println("\n=========服务端推送界面=========");
+                    System.out.println("【"+msg.getSendTime()+"】"+msg.getSender()+"对你发送了：" +msg.getContent());
                 }else {
                     System.out.println("其他类型msg，暂时不处理");
                 }

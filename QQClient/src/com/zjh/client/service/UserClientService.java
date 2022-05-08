@@ -36,7 +36,7 @@ public class UserClientService {
         u.setPassword(password);
         //和服务器端取得联系，得到Socket
         try {
-            socket = new Socket(InetAddress.getByName("127.0.0.1"), 9999);
+            socket = new Socket(InetAddress.getByName("127.0.0.1"), 9998);
             System.out.println("socket已连接...");
             //发送序列化用户对象
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
