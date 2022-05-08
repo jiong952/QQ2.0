@@ -1,5 +1,6 @@
 package com.zjh.client.view;
 
+import com.zjh.client.service.FileClientService;
 import com.zjh.client.service.MessageClientService;
 import com.zjh.client.service.UserClientService;
 import com.zjh.common.MessageType;
@@ -15,6 +16,7 @@ import com.zjh.utils.Utility;
 public class QQView {
     private UserClientService userClientService = new UserClientService();
     private MessageClientService messageClientService = new MessageClientService();
+    private FileClientService fileClientService = new FileClientService();
     public static void main(String[] args) {
         new QQView().showMenu();
         System.out.println("客户端退出.......");
@@ -83,7 +85,11 @@ public class QQView {
                                     messageClientService.privateChat(chatContent,userId,getterId);
                                     break;
                                 case "4":
-                                    System.out.println("发送文件");
+                                    System.out.print("请输入你要发送文件的用户（在线的）：");
+                                    String file_getter = Utility.readString(20); //接收者Id
+                                    System.out.print("请输入发送文件本地路径(如：D:\\pic.png)：");
+                                    String src = Utility.readString(50);
+                                    fileClientService.sendFile(src,userId,file_getter);
                                     break;
                                 case "5":
                                     StringBuilder getters = new StringBuilder();

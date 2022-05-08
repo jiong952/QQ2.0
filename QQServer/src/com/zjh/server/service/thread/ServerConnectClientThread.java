@@ -1,4 +1,4 @@
-package com.zjh.server.service;
+package com.zjh.server.service.thread;
 
 import com.zjh.common.Message;
 import com.zjh.common.MessageType;
@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Iterator;
 
 /**
  * 服务器连接客户端线程 服务端建立与客户端通讯线程
@@ -89,8 +88,13 @@ public class ServerConnectClientThread extends Thread{
                         ObjectOutputStream oos = new ObjectOutputStream(ManageServerConnectClientThread.getThread(getters[i]).getSocket().getOutputStream());
                         oos.writeObject(msg);
                     }
-                }
-                else {
+                }else if(MessageType.MESSAGE_FILE.equals(msg.getMsgType())){
+                    //发送文件功能
+                    System.out.println("【"+msg.getSendTime()+"】"+msg.getSender() +  " 向" + msg.getGetter() + "发送了: " +msg.getFileMsg().getFileName());
+                    //转发消息
+                    ObjectOutputStream oos = new ObjectOutputStream(ManageServerConnectClientThread.getThread(msg.getGetter()).getSocket().getOutputStream());
+                    oos.writeObject(msg);
+                }else {
                     System.out.println("其他类型消息，暂不处理");
                 }
             } catch (IOException | ClassNotFoundException e) {

@@ -15,6 +15,15 @@ public class Message implements Serializable {
     private String content;
     private String sendTime;
     private String msgType;
+    private FileMsg fileMsg;
+
+    public FileMsg getFileMsg() {
+        return fileMsg;
+    }
+
+    public void setFileMsg(FileMsg fileMsg) {
+        this.fileMsg = fileMsg;
+    }
 
     public static long getSerialVersionUID() {
         return serialVersionUID;

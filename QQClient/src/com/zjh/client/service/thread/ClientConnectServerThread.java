@@ -1,11 +1,14 @@
-package com.zjh.client.service;
+package com.zjh.client.service.thread;
 
 import com.zjh.common.Message;
 import com.zjh.common.MessageType;
+import com.zjh.utils.FileUtils;
+import com.zjh.utils.Utility;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.util.Date;
 
 /**
  * 客户端连接服务器线程 客户端通讯线程
@@ -51,8 +54,18 @@ public class ClientConnectServerThread extends Thread{
                     //群聊功能
                     System.out.println("\n========="+msg.getSender() +" "+msg.getGetter()+"的群聊界面=========");
                     System.out.println("【"+msg.getSendTime()+"】"+msg.getSender()+"发送了：" +msg.getContent());
-                }
-                else {
+                }else if(MessageType.MESSAGE_FILE.equals(msg.getMsgType())){
+                    //发送文件过来
+                    System.out.println("\n=========与"+msg.getSender()+"的私聊界面=========");
+                    //拿到文件信息
+                    System.out.println("【"+msg.getSendTime()+"】"+msg.getSender()+"对你发送了：" +msg.getFileMsg().getFileName());
+                    //用户选择存放路径 这里无法选择路径，因为子线程会和主线程同时阻塞等待scanner，发生冲突
+                    //但后期使用图形化界面就不会同时争夺同一个资源（文件管理器）
+                    //先用封装替代
+                    String desc = "D:\\" + msg.getGetter() + "_" + msg.getFileMsg().getFileName() + "_" + new Date().toString();
+                    FileUtils.storeFile(msg.getFileMsg().getFileBytes(),desc);
+                    System.out.println(msg.getFileMsg().getFileName()+ " 已保存到" + desc);
+                }else {
                     System.out.println("其他类型msg，暂时不处理");
                 }
             } catch (IOException | ClassNotFoundException e) {

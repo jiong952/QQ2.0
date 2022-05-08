@@ -16,4 +16,5 @@ public interface MessageType {
     String MESSAGE_CLIENT_EXIT = "7"; //客户端请求退出
     String MESSAGE_TO_ALL_MSG = "8"; //群发信息包
     String MESSAGE_GROUP_CHAT = "9"; //群聊信息包
+    String MESSAGE_FILE = "10"; //文件信息包
 }

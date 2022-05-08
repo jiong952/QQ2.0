@@ -1,5 +1,7 @@
 package com.zjh.client.service;
 
+import com.zjh.client.service.thread.ClientConnectServerThread;
+import com.zjh.client.service.thread.ManageClientConnectServerThread;
 import com.zjh.common.Message;
 import com.zjh.common.MessageType;
 import com.zjh.common.User;
@@ -48,6 +50,7 @@ public class UserClientService {
                 ClientConnectServerThread connectServerThread = new ClientConnectServerThread(socket);
                 //启动线程
                 connectServerThread.start();
+                connectServerThread.setPriority(10);
                 //为了方便管理多用户，这里创建一个类进行统一管理
                 ManageClientConnectServerThread.addThread(userId,connectServerThread);
                 return MessageType.MESSAGE_SUCCEED;
