@@ -62,7 +62,7 @@ public class ClientConnectServerThread extends Thread{
                     //用户选择存放路径 这里无法选择路径，因为子线程会和主线程同时阻塞等待scanner，发生冲突
                     //但后期使用图形化界面就不会同时争夺同一个资源（文件管理器）
                     //先用封装替代
-                    String desc = "D:\\" + msg.getGetter() + "_" + msg.getFileMsg().getFileName() + "_" + new Date().toString();
+                    String desc = "D:\\" + msg.getGetter() +"_" + new Date().getTime() + "_" + msg.getFileMsg().getFileName();
                     FileUtils.storeFile(msg.getFileMsg().getFileBytes(),desc);
                     System.out.println(msg.getFileMsg().getFileName()+ " 已保存到" + desc);
                 }else if(MessageType.MESSAGE_NEWS.equals(msg.getMsgType())){

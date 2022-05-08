@@ -127,8 +127,17 @@ public class ServerConnectClientThread extends Thread{
                     //发送文件功能
                     System.out.println("【"+msg.getSendTime()+"】"+msg.getSender() +  " 向" + msg.getGetter() + "发送了: " +msg.getFileMsg().getFileName());
                     //转发消息
-                    ObjectOutputStream oos = new ObjectOutputStream(ManageServerConnectClientThread.getThread(msg.getGetter()).getSocket().getOutputStream());
-                    oos.writeObject(msg);
+                    //判断是否在线
+                    ServerConnectClientThread thread = ManageServerConnectClientThread.getThread(msg.getGetter());
+                    if(thread != null){
+                        ObjectOutputStream oos = new ObjectOutputStream(ManageServerConnectClientThread.getThread(msg.getGetter()).getSocket().getOutputStream());
+                        oos.writeObject(msg);
+                    }else {
+                        //不在线，要留言
+                        //离线存入暂存
+                        MangeOffMsgService.addOffMsg(msg.getGetter(),msg);
+                    }
+
                 }else {
                     System.out.println("其他类型消息，暂不处理");
                 }
