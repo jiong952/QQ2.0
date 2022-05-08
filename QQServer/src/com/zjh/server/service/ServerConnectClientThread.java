@@ -76,7 +76,17 @@ public class ServerConnectClientThread extends Thread{
                         }
                     }
 
-                } else {
+                }else if(MessageType.MESSAGE_GROUP_CHAT.equals(msg.getMsgType())){
+                    //群聊功能
+                    System.out.println("【"+msg.getSendTime()+"】"+msg.getSender() +  " 向" + msg.getGetter() + "发送了: " +msg.getContent());
+                    //服务端承担消息转发的作用
+                    String[] getters = msg.getGetter().split(" ");
+                    for (int i = 0; i < getters.length; i++) {
+                        ObjectOutputStream oos = new ObjectOutputStream(ManageServerConnectClientThread.getThread(getters[i]).getSocket().getOutputStream());
+                        oos.writeObject(msg);
+                    }
+                }
+                else {
                     System.out.println("其他类型消息，暂不处理");
                 }
             } catch (IOException | ClassNotFoundException e) {

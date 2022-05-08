@@ -41,7 +41,12 @@ public class ClientConnectServerThread extends Thread{
                     System.out.println("\n=========与"+msg.getSender()+"的私聊界面=========");
                     //拿到普通消息
                     System.out.println("【"+msg.getSendTime()+"】"+msg.getSender()+"对你发送了：" +msg.getContent());
-                }else {
+                }else if(MessageType.MESSAGE_GROUP_CHAT.equals(msg.getMsgType())){
+                    //群聊功能
+                    System.out.println("\n========="+msg.getSender() +" "+msg.getGetter()+"的群聊界面=========");
+                    System.out.println("【"+msg.getSendTime()+"】"+msg.getSender()+"发送了：" +msg.getContent());
+                }
+                else {
                     System.out.println("其他类型msg，暂时不处理");
                 }
             } catch (IOException | ClassNotFoundException e) {

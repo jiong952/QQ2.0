@@ -40,6 +40,7 @@ public class QQView {
                             System.out.println("\t\t 2 群发消息");
                             System.out.println("\t\t 3 私发消息");
                             System.out.println("\t\t 4 发送文件");
+                            System.out.println("\t\t 5 群聊功能");
                             System.out.println("\t\t 9 退出系统");
                             System.out.println("请输入你的选择:");
                             //输入一位指令,根据指令执行不同逻辑
@@ -72,6 +73,21 @@ public class QQView {
                                     break;
                                 case "4":
                                     System.out.println("发送文件");
+                                    break;
+                                case "5":
+                                    StringBuilder getters = new StringBuilder();
+                                    System.out.println("\n=========群聊界面=========");
+                                    System.out.print("请输入你要创建群聊的用户们（输入q结束）：");
+                                    String getter = Utility.readString(20); //接收者Id
+                                    while (!"q".equals(getter)){
+                                        getters.append(getter + " ");
+                                        System.out.print("请输入你要创建群聊的用户们（输入q结束）：");
+                                        getter = Utility.readString(20); //接收者Id
+                                    }
+                                    System.out.print("请输入发送的内容：");
+                                    String groupChatContent = Utility.readString(100); //聊天内容
+                                    //这里目前只能在线用户通讯，后期使用数据库将消息存入数据库后就可以实现离线留言功能
+                                    messageClientService.groupChat(groupChatContent,userId,getters.toString());
                                     break;
                                 case "9":
                                     System.out.println("退出系统成功！");

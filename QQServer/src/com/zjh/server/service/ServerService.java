@@ -22,6 +22,7 @@ public class ServerService {
         userHashMap.put("admin",new User("admin","a"));
         userHashMap.put("张俊鸿",new User("张俊鸿","a"));
         userHashMap.put("zjh",new User("zjh","a"));
+        userHashMap.put("a",new User("a","a"));
     }
     //用户登录验证
     private boolean checkUser(String userId, String password){
