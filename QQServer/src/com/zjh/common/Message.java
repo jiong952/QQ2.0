@@ -11,9 +11,6 @@ public class Message implements Serializable {
     private String sendTime;
     private String msgType;
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
 
     public String getSender() {
         return sender;

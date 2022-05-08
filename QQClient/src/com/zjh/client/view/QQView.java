@@ -56,7 +56,9 @@ public class QQView {
                                     }
                                     break;
                                 case "2":
-                                    System.out.println("群发消息");
+                                    System.out.print("请输入你要群发的内容：");
+                                    String toALLContent = Utility.readString(100); //聊天内容
+                                    messageClientService.sendMsgToAll(toALLContent,userId);
                                     break;
                                 case "3":
                                     System.out.println("\n=========私聊界面=========");

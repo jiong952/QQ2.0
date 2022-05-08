@@ -36,11 +36,11 @@ public class ClientConnectServerThread extends Thread{
                     for (int i = 0; i < onlineUsers.length; i++) {
                         System.out.println("用户：" + onlineUsers[i]);
                     }
-                }else if(MessageType.MESSAGE_COMMON_MSG.equals(msg.getMsgType())){
-                    System.out.println("\n=========私聊界面=========");
+                }else if(MessageType.MESSAGE_COMMON_MSG.equals(msg.getMsgType()) || MessageType.MESSAGE_TO_ALL_MSG.equals(msg.getMsgType())){
+                    //私聊和群发的本质是一样的
+                    System.out.println("\n=========与"+msg.getSender()+"的私聊界面=========");
                     //拿到普通消息
                     System.out.println("【"+msg.getSendTime()+"】"+msg.getSender()+"对你发送了：" +msg.getContent());
-
                 }else {
                     System.out.println("其他类型msg，暂时不处理");
                 }

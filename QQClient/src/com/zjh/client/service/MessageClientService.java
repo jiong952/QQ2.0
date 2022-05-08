@@ -10,6 +10,26 @@ import java.util.Date;
 /**客户端聊天功能业务逻辑**/
 public class MessageClientService {
 
+    //群发功能 发送给自己的所有好友 【后期拓展离线留言】
+    public void sendMsgToAll(String chatContent,String senderId){
+        Message message = new Message();
+        message.setMsgType(MessageType.MESSAGE_TO_ALL_MSG);
+        message.setSender(senderId);
+        message.setContent(chatContent);
+        //Sun May 08 01:11:07 CST 2022
+        //时间后期转化为正常格式
+        String time = new Date().toString();
+        message.setSendTime(time);
+        System.out.println("【"+time+"】 你对所有人发送了：" +chatContent);
+        //从用户集合中拿到当前通讯进程，发送该消息
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(ManageClientConnectServerThread.getThread(senderId).getSocket().getOutputStream());
+            oos.writeObject(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     //私聊功能
     public void privateChat(String chatContent,String senderId,String getterId){
         Message message = new Message();
@@ -30,4 +50,6 @@ public class MessageClientService {
             e.printStackTrace();
         }
     }
+
+
 }
