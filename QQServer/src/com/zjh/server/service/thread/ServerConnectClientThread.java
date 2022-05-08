@@ -2,6 +2,7 @@ package com.zjh.server.service.thread;
 
 import com.zjh.common.Message;
 import com.zjh.common.MessageType;
+import com.zjh.server.service.MangeOffMsgService;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -62,8 +63,17 @@ public class ServerConnectClientThread extends Thread{
                     //服务端承担消息转发的作用
                     //拿到与对应getter通讯的socket，然后发送消息
                     //这里后期使用数据库可以加一个离线留言功能
-                    ObjectOutputStream oos = new ObjectOutputStream(ManageServerConnectClientThread.getThread(msg.getGetter()).getSocket().getOutputStream());
-                    oos.writeObject(msg);
+                    //查看是否在线
+                    ServerConnectClientThread thread = ManageServerConnectClientThread.getThread(msg.getGetter());
+                    if(thread != null){
+                        //在线直接发送
+                        ObjectOutputStream oos = new ObjectOutputStream(thread.getSocket().getOutputStream());
+                        oos.writeObject(msg);
+                    }else {
+                        //离线存入暂存
+                        MangeOffMsgService.addOffMsg(msg.getGetter(),msg);
+                        System.out.println(MangeOffMsgService.getOffMsgMap());
+                    }
                 }else if(MessageType.MESSAGE_TO_ALL_MSG.equals(msg.getMsgType())){
                     //群发功能
                     System.out.println("【"+msg.getSendTime()+"】"+msg.getSender() + " 向所有人发送了: "+msg.getContent());

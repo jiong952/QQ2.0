@@ -12,6 +12,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -89,6 +90,22 @@ public class ServerService {
                         serverConnectClientThread.start();
                         //把登录线程放进集合统一管理
                         ManageServerConnectClientThread.addThread(user.getUserId(), serverConnectClientThread);
+                        //查看是否有离线消息，有就发送给他
+                        ArrayList<Message> messageList = MangeOffMsgService.getOffMsgMap().get(user.getUserId());
+                        if(messageList != null){
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            //遍历消息发送
+                            for (Message msg : messageList) {
+                                System.out.println(msg);
+                                ObjectOutputStream os = new ObjectOutputStream(ManageServerConnectClientThread.getThread(user.getUserId()).getSocket().getOutputStream());
+                                os.writeObject(msg);
+
+                            }
+                        }
                     }else {
                         //登录过了
                         System.out.println(user.getUserId()+ "已登录过");

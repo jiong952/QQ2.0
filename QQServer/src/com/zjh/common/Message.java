@@ -79,4 +79,16 @@ public class Message implements Serializable {
 
     public Message() {
     }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "sender='" + sender + '\'' +
+                ", getter='" + getter + '\'' +
+                ", content='" + content + '\'' +
+                ", sendTime='" + sendTime + '\'' +
+                ", msgType='" + msgType + '\'' +
+                ", fileMsg=" + fileMsg +
+                '}';
+    }
 }
