@@ -76,7 +76,7 @@ public class QQView {
                                     break;
                                 case "3":
                                     System.out.println("\n=========私聊界面=========");
-                                    System.out.print("请输入你要聊天的用户（在线的）：");
+                                    System.out.print("请输入你要聊天的用户：");
                                     //这里目前只能在线用户通讯，后期使用数据库将消息存入数据库后就可以实现离线留言功能
                                     String getterId = Utility.readString(20); //接收者Id
                                     System.out.print("请输入发送的内容：");
@@ -85,7 +85,7 @@ public class QQView {
                                     messageClientService.privateChat(chatContent,userId,getterId);
                                     break;
                                 case "4":
-                                    System.out.print("请输入你要发送文件的用户（在线的）：");
+                                    System.out.print("请输入你要发送文件的用户：");
                                     String file_getter = Utility.readString(20); //接收者Id
                                     System.out.print("请输入发送文件本地路径(如：D:\\pic.png)：");
                                     String src = Utility.readString(50);

@@ -2,12 +2,16 @@ package com.zjh.server.service.thread;
 
 import com.zjh.common.Message;
 import com.zjh.common.MessageType;
+import com.zjh.common.User;
 import com.zjh.server.service.MangeOffMsgService;
+import com.zjh.server.service.ServerService;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 服务器连接客户端线程 服务端建立与客户端通讯线程
@@ -62,7 +66,7 @@ public class ServerConnectClientThread extends Thread{
                     System.out.println("【"+msg.getSendTime()+"】"+msg.getSender() + " 向" + msg.getGetter() + "发送了: "+msg.getContent());
                     //服务端承担消息转发的作用
                     //拿到与对应getter通讯的socket，然后发送消息
-                    //这里后期使用数据库可以加一个离线留言功能
+                    //已实现离线，但是数据没存到数据库
                     //查看是否在线
                     ServerConnectClientThread thread = ManageServerConnectClientThread.getThread(msg.getGetter());
                     if(thread != null){
@@ -72,20 +76,31 @@ public class ServerConnectClientThread extends Thread{
                     }else {
                         //离线存入暂存
                         MangeOffMsgService.addOffMsg(msg.getGetter(),msg);
-                        System.out.println(MangeOffMsgService.getOffMsgMap());
+//                        System.out.println(MangeOffMsgService.getOffMsgMap());
                     }
                 }else if(MessageType.MESSAGE_TO_ALL_MSG.equals(msg.getMsgType())){
-                    //群发功能
+                    //群发功能 给除了自己之外的所有人
                     System.out.println("【"+msg.getSendTime()+"】"+msg.getSender() + " 向所有人发送了: "+msg.getContent());
                     //服务端承担消息转发的作用
                     //获取在线列表，去除自己
-                    String onlineUserList = ManageServerConnectClientThread.returnOnlineUserList();
-                    String[] users = onlineUserList.split(" ");
-                    for (int i = 0; i < users.length; i++) {
+                    List<String> userList = ServerService.getAllUser();
+//                    String onlineUserList = ManageServerConnectClientThread.returnOnlineUserList();
+//                    String[] users = onlineUserList.split(" ");
+                    for (int i = 0; i < userList.size(); i++) {
                         //校验，排除自己
-                        if(!users[i].equals(msg.getSender())){
-                            ObjectOutputStream oos = new ObjectOutputStream(ManageServerConnectClientThread.getThread(users[i]).getSocket().getOutputStream());
-                            oos.writeObject(msg);
+                        if(!userList.get(i).equals(msg.getSender())){
+                            //查看是否在线
+                            ServerConnectClientThread thread = ManageServerConnectClientThread.getThread(userList.get(i));
+                            if(thread != null){
+                                //在线直接发送
+                                ObjectOutputStream oos = new ObjectOutputStream(thread.getSocket().getOutputStream());
+                                oos.writeObject(msg);
+                            }else {
+                                //不在线，要留言
+                                //离线存入暂存
+                                MangeOffMsgService.addOffMsg(userList.get(i),msg);
+//                                System.out.println(MangeOffMsgService.getOffMsgMap());
+                            }
                         }
                     }
 

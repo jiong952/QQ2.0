@@ -13,6 +13,8 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -31,6 +33,20 @@ public class ServerService {
         userHashMap.put("张俊鸿",new User("张俊鸿","a"));
         userHashMap.put("zjh",new User("zjh","a"));
         userHashMap.put("a",new User("a","a"));
+    }
+
+
+    /**
+     * 返回所有用户
+     * @return {@link List}<{@link String}>
+     */
+    public static List<String> getAllUser(){
+        List<String> users = new ArrayList<>();
+        Iterator<String> iterator = userHashMap.keySet().iterator();
+        while (iterator.hasNext()){
+            users.add(iterator.next());
+        }
+        return users;
     }
 
     /**
