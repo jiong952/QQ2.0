@@ -11,13 +11,24 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 //参考mvc分层，这里做用户客户端的业务逻辑处理
-/**客户端登录、退出、拉取在线用户业务逻辑**/
+
+/**
+ * 用户客户端服务客户端登录、退出、拉取在线用户业务逻辑@
+ * author 张俊鸿
+ * @date 2022/05/08
+ **/
 public class UserClientService {
 
     private User u = new User();
     private Socket socket;
 
-    //登录验证
+    /**
+     * 检查用户
+     *
+     * @param userId   用户id
+     * @param password 密码
+     * @return {@link String}
+     *///登录验证
     public String checkUser(String userId, String password){
         u.setUserId(userId);
         u.setPassword(password);
@@ -55,6 +66,9 @@ public class UserClientService {
         return MessageType.MESSAGE_LOGIN_FAIL;
     }
 
+    /**
+     * 拉取在线用户
+     */
     //拉取在线用户
     public void onLineFriendList(){
         //发送类型为MESSAGE_GET_ONLINE_FRIEND的Message
@@ -69,7 +83,9 @@ public class UserClientService {
         }
     }
 
-    //安全退出系统
+    /**
+     * 退出
+     */
     public void exit(){
         //给服务端发送MESSAGE_CLIENT_EXIT类型的message
         Message message = new Message();

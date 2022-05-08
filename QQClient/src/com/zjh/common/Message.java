@@ -2,6 +2,11 @@ package com.zjh.common;
 
 import java.io.Serializable;
 
+/**
+ * 消息类
+ * @author 张俊鸿
+ * @date 2022/05/08
+ */
 public class Message implements Serializable {
 
     private static final long serialVersionUID = 1L;

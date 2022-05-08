@@ -11,7 +11,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**服务器端业务逻辑处理**/
+/**
+ * 服务器端业务逻辑处理
+ * @author 张俊鸿
+ * @date 2022/05/08
+ **/
 public class ServerService {
     private ServerSocket serverSocket = null;
     //创建一个集合模拟用户数据库 ,key是userId,value是user
@@ -24,7 +28,14 @@ public class ServerService {
         userHashMap.put("zjh",new User("zjh","a"));
         userHashMap.put("a",new User("a","a"));
     }
-    //用户登录验证
+
+    /**
+     * 用户登录验证
+     *
+     * @param userId   用户id
+     * @param password 密码
+     * @return boolean
+     */
     private boolean checkUser(String userId, String password){
         boolean b  = false;
         //用户不存在
@@ -38,6 +49,10 @@ public class ServerService {
         }
         return b;
     }
+
+    /**
+     * 服务器通讯监听
+     */
     public ServerService() {
         //服务端在9999端口监听
         try {

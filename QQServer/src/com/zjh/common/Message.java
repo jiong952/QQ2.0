@@ -2,6 +2,11 @@ package com.zjh.common;
 
 import java.io.Serializable;
 
+/**
+ * 消息类
+ * @author 张俊鸿
+ * @date 2022/05/08
+ */
 public class Message implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -11,6 +16,9 @@ public class Message implements Serializable {
     private String sendTime;
     private String msgType;
 
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
 
     public String getSender() {
         return sender;

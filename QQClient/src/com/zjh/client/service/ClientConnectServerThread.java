@@ -7,7 +7,13 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 
-/** 客户端通讯线程 **/
+/**
+ * 客户端连接服务器线程 客户端通讯线程
+ * @author 张俊鸿
+ * @date 2022/05/08
+ **/
+
+
 public class ClientConnectServerThread extends Thread{
     private Socket socket;
 

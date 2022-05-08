@@ -1,5 +1,11 @@
 package com.zjh.common;
 
+/**
+ * 消息类型
+ *
+ * @author 张俊鸿
+ * @date 2022/05/08
+ */
 public interface MessageType {
     String MESSAGE_SUCCEED ="1"; //登录成功
     String MESSAGE_LOGIN_FAIL ="2"; //登录失败

@@ -7,10 +7,23 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.Date;
 
-/**客户端聊天功能业务逻辑**/
+/**
+ * 消息客户端服务客户端聊天功能业务逻辑
+ * @author 张俊鸿
+ * @date 2022/05/08
+ **/
+
+
 public class MessageClientService {
 
-    //群聊功能，选择指定好友发送
+
+    /**
+     * 群聊功能，选择指定好友发送
+     *
+     * @param content 内容
+     * @param sender  发送方
+     * @param getters 接收方
+     */
     public void groupChat(String content,String sender,String getters){
         Message message = new Message();
         message.setMsgType(MessageType.MESSAGE_GROUP_CHAT);
@@ -31,7 +44,11 @@ public class MessageClientService {
         }
     }
 
-    //群发功能 发送给自己的所有好友 【后期拓展离线留言】
+    /**
+     * 群发功能 发送给自己的所有好友 【后期拓展离线留言】
+     * @param chatContent 聊天内容
+     * @param senderId    发件人id
+     */
     public void sendMsgToAll(String chatContent,String senderId){
         Message message = new Message();
         message.setMsgType(MessageType.MESSAGE_TO_ALL_MSG);
@@ -51,7 +68,13 @@ public class MessageClientService {
         }
     }
 
-    //私聊功能
+    /**
+     * 私人聊天
+     *
+     * @param chatContent 聊天内容
+     * @param senderId    发件人id
+     * @param getterId    getter id
+     *///私聊功能
     public void privateChat(String chatContent,String senderId,String getterId){
         Message message = new Message();
         message.setMsgType(MessageType.MESSAGE_COMMON_MSG);

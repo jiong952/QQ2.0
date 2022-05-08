@@ -5,6 +5,13 @@ import com.zjh.client.service.UserClientService;
 import com.zjh.common.MessageType;
 import com.zjh.utils.Utility;
 
+
+/**
+ * QQ界面
+ *
+ * @author 张俊鸿
+ * @date 2022/05/08
+ */
 public class QQView {
     private UserClientService userClientService = new UserClientService();
     private MessageClientService messageClientService = new MessageClientService();
@@ -15,6 +22,10 @@ public class QQView {
 
     private boolean loop = true; //控制菜单是否显示
     private String key; //控制台指令
+
+    /**
+     * 显示菜单
+     */
     //显示主菜单
     private void showMenu(){
         while (loop){

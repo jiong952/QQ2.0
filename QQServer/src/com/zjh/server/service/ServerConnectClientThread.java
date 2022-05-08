@@ -9,7 +9,11 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Iterator;
 
-/** 服务端建立与客户端通讯线程 **/
+/**
+ * 服务器连接客户端线程 服务端建立与客户端通讯线程
+ * @author 张俊鸿
+ * @date 2022/05/08
+ **/
 public class ServerConnectClientThread extends Thread{
     //和客户端通讯的socket
     private Socket socket;
