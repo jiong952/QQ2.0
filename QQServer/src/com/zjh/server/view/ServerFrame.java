@@ -1,7 +1,6 @@
 package com.zjh.server.view;
 
-import com.zjh.server.service.ServerService;
-import com.zjh.server.service.thread.SendNewsThread;
+import com.zjh.server.service.thread.ConnectToSingleThread;
 
 /**
  * 服务器启动类
@@ -11,6 +10,6 @@ import com.zjh.server.service.thread.SendNewsThread;
  */
 public class ServerFrame {
     public static void main(String[] args) {
-        new ServerService();
+        new ConnectToSingleThread();
     }
 }

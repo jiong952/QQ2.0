@@ -1,11 +1,15 @@
 package com.zjh.client.view;
 
 import com.zjh.client.service.FileClientService;
+import com.zjh.client.service.FriendService;
 import com.zjh.client.service.MessageClientService;
 import com.zjh.client.service.UserClientService;
+import com.zjh.common.Friend;
 import com.zjh.common.MessageType;
 import com.zjh.common.StateCode;
 import com.zjh.utils.Utility;
+
+import java.util.List;
 
 
 /**
@@ -18,6 +22,7 @@ public class QQView {
     private UserClientService userClientService = new UserClientService();
     private MessageClientService messageClientService = new MessageClientService();
     private FileClientService fileClientService = new FileClientService();
+    private FriendService friendService = new FriendService();
     public static void main(String[] args) {
         new QQView().showMenu();
         System.out.println("客户端退出.......");
@@ -110,6 +115,13 @@ public class QQView {
                                     String groupChatContent = Utility.readString(100); //聊天内容
                                     //这里目前只能在线用户通讯，后期使用数据库将消息存入数据库后就可以实现离线留言功能
                                     messageClientService.groupChat(groupChatContent,userId,getters.toString());
+                                    break;
+                                case "6":
+                                    System.out.println("\n=========好友列表=========");
+                                    List<Friend> allFriend = friendService.findAllFriend(userId);
+                                    for (Friend friend : allFriend) {
+                                        System.out.println(friend);
+                                    }
                                     break;
                                 case "0":
                                     System.out.println("退出系统成功！");

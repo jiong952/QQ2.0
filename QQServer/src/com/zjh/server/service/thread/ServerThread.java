@@ -1,11 +1,9 @@
 package com.zjh.server.service.thread;
 
-import com.zjh.common.Friend;
 import com.zjh.common.Message;
 import com.zjh.common.MessageType;
 import com.zjh.server.dao.FriendDao;
 import com.zjh.server.service.MangeOffMsgService;
-import com.zjh.server.service.ServerService;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -21,13 +19,13 @@ import java.util.List;
  * @author 张俊鸿
  * @date 2022/05/08
  **/
-public class ServerConnectClientThread extends Thread{
+public class ServerThread extends Thread{
     private FriendDao friendDao = new FriendDao();
     //和客户端通讯的socket
     private Socket socket;
     private String userId;
 
-    public ServerConnectClientThread( String userId,Socket socket) {
+    public ServerThread(String userId, Socket socket) {
         this.socket = socket;
         this.userId = userId;
     }
@@ -75,7 +73,7 @@ public class ServerConnectClientThread extends Thread{
                     //拿到与对应getter通讯的socket，然后发送消息
                     //已实现离线，但是数据没存到数据库
                     //查看是否在线
-                    ServerConnectClientThread thread = ManageServerConnectClientThread.getThread(msg.getGetterId());
+                    ServerThread thread = ManageServerConnectClientThread.getThread(msg.getGetterId());
                     if(thread != null){
                         //在线直接发送
                         ObjectOutputStream oos = new ObjectOutputStream(thread.getSocket().getOutputStream());
@@ -90,14 +88,14 @@ public class ServerConnectClientThread extends Thread{
                     System.out.println("【"+msg.getSendTime()+"】"+msg.getSenderId() + " 向所有人发送了: "+msg.getContent());
                     //服务端承担消息转发的作用
                     //获取在线列表，去除自己
-                    List<String> userList = ServerService.getAllUser();
+                    List<String> userList = ConnectToSingleThread.getAllUser();
 //                    String onlineUserList = ManageServerConnectClientThread.returnOnlineUserList();
 //                    String[] users = onlineUserList.split(" ");
                     for (int i = 0; i < userList.size(); i++) {
                         //校验，排除自己
                         if(!userList.get(i).equals(msg.getSenderId())){
                             //查看是否在线
-                            ServerConnectClientThread thread = ManageServerConnectClientThread.getThread(userList.get(i));
+                            ServerThread thread = ManageServerConnectClientThread.getThread(userList.get(i));
                             if(thread != null){
                                 //在线直接发送
                                 ObjectOutputStream oos = new ObjectOutputStream(thread.getSocket().getOutputStream());
@@ -118,7 +116,7 @@ public class ServerConnectClientThread extends Thread{
                     String[] getters = msg.getGetterId().split(" ");
                     for (int i = 0; i < getters.length; i++) {
                         //查看是否在线
-                        ServerConnectClientThread thread = ManageServerConnectClientThread.getThread(getters[i]);
+                        ServerThread thread = ManageServerConnectClientThread.getThread(getters[i]);
                         if(thread != null){
                             //在线直接发送
                             ObjectOutputStream oos = new ObjectOutputStream(ManageServerConnectClientThread.getThread(getters[i]).getSocket().getOutputStream());
@@ -135,7 +133,7 @@ public class ServerConnectClientThread extends Thread{
                     System.out.println("【"+msg.getSendTime()+"】"+msg.getSenderId() +  " 向" + msg.getGetterId() + "发送了: " +msg.getFileMsg().getFileName());
                     //转发消息
                     //判断是否在线
-                    ServerConnectClientThread thread = ManageServerConnectClientThread.getThread(msg.getGetterId());
+                    ServerThread thread = ManageServerConnectClientThread.getThread(msg.getGetterId());
                     if(thread != null){
                         ObjectOutputStream oos = new ObjectOutputStream(ManageServerConnectClientThread.getThread(msg.getGetterId()).getSocket().getOutputStream());
                         oos.writeObject(msg);

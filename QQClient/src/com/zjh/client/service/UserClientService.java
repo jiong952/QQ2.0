@@ -45,11 +45,11 @@ public class UserClientService {
             requestMsg.setContent("checkUser");
             requestMsg.setParams(new Object[]{u});
             oos.writeObject(requestMsg);
-            System.out.println(requestMsg);
+//            System.out.println(requestMsg);
             //接收服务端响应的消息
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
             ResponseMsg responseMsg = (ResponseMsg) ois.readObject();
-            System.out.println(responseMsg);
+//            System.out.println(responseMsg);
             if(StateCode.SUCCEED.equals(responseMsg.getStateCode())){
                 //登录成功
                 /*创建一个和服务端保持通信的线程*/

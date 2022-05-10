@@ -1,5 +1,6 @@
 package com.zjh.server.dao;
 
+import com.zjh.common.Friend;
 import com.zjh.common.User;
 import com.zjh.server.utils.JdbcUtils;
 import org.apache.commons.dbutils.handlers.BeanHandler;
@@ -9,6 +10,8 @@ import static com.zjh.server.utils.MyDsUtils.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author 张俊鸿
@@ -16,6 +19,12 @@ import java.sql.SQLException;
  * @since 2022-05-10 16:28
  */
 public class UserDao {
+    //测试
+    public static void main(String[] args) {
+        ArrayList<String> list = new ArrayList<>();
+        list.add("a");
+        System.out.println(new UserDao().findAllFriend(list));
+    }
 
     public int register()  {
         int row = 0;
@@ -49,5 +58,27 @@ public class UserDao {
             throw new DaoException("登录失败",e);
         }
         return user;
+    }
+
+    /**
+     * 根据好友id返回好友信息
+     *
+     * @param list 列表
+     * @return {@link List}<{@link Friend}>
+     */
+    public List<Friend> findAllFriend(List<String> list){
+        List<Friend> friendList = new ArrayList<>();
+        for (String id : list) {
+            String sql = "SELECT `user_id` AS friendId,`user_name` AS friendName,`avatar` AS avatar,`gender` AS gender,\n" +
+                    "`age` AS age ,`phone_number` AS `phone_number`  FROM `user` WHERE `user_id`= ?";
+            try {
+                Friend query = queryRunner.query(sql, new BeanHandler<>(Friend.class), id);
+                friendList.add(query);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                throw new DaoException("获取好友列表异常",e);
+            }
+        }
+        return friendList;
     }
 }
