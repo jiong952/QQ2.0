@@ -6,9 +6,8 @@ import com.zjh.server.utils.Utility;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * @author 张俊鸿
@@ -28,8 +27,9 @@ public class SendNewsThread extends Thread{
             }
             //封装msg
             Message message = new Message();
-            message.setSender("服务端");
-            String time = new Date().toString();
+            message.setSenderId("服务端");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String time = sdf.format(new Date());
             message.setSendTime(time);
             message.setContent(news);
             message.setMsgType(MessageType.MESSAGE_NEWS);

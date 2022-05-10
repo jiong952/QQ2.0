@@ -10,8 +10,8 @@ import java.io.Serializable;
 public class Message implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private String sender;
-    private String getter;
+    private String senderId;
+    private String getterId;
     private String content;
     private String sendTime;
     private String msgType;
@@ -29,20 +29,20 @@ public class Message implements Serializable {
         return serialVersionUID;
     }
 
-    public String getSender() {
-        return sender;
+    public String getSenderId() {
+        return senderId;
     }
 
-    public void setSender(String sender) {
-        this.sender = sender;
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
     }
 
-    public String getGetter() {
-        return getter;
+    public String getGetterId() {
+        return getterId;
     }
 
-    public void setGetter(String getter) {
-        this.getter = getter;
+    public void setGetterId(String getterId) {
+        this.getterId = getterId;
     }
 
     public String getContent() {
@@ -69,9 +69,9 @@ public class Message implements Serializable {
         this.msgType = msgType;
     }
 
-    public Message(String sender, String getter, String content, String sendTime, String msgType) {
-        this.sender = sender;
-        this.getter = getter;
+    public Message(String senderId, String getterId, String content, String sendTime, String msgType) {
+        this.senderId = senderId;
+        this.getterId = getterId;
         this.content = content;
         this.sendTime = sendTime;
         this.msgType = msgType;

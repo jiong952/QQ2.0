@@ -30,7 +30,9 @@ public class UserClientService {
      * @param userId   用户id
      * @param password 密码
      * @return {@link String}
-     *///登录验证
+     */
+    //登录验证
+    //修改逻辑为传函数名到后台checkUser调用后台dao
     public String checkUser(String userId, String password){
         u.setUserId(userId);
         u.setPassword(password);
@@ -77,7 +79,7 @@ public class UserClientService {
         //发送类型为MESSAGE_GET_ONLINE_FRIEND的Message
         Message message = new Message();
         message.setMsgType(MessageType.MESSAGE_GET_ONLINE_FRIEND);
-        message.setSender(u.getUserId());
+        message.setSenderId(u.getUserId());
         try {
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(message);
@@ -92,7 +94,7 @@ public class UserClientService {
     public void exit(){
         //给服务端发送MESSAGE_CLIENT_EXIT类型的message
         Message message = new Message();
-        message.setSender(u.getUserId());
+        message.setSenderId(u.getUserId());
         message.setMsgType(MessageType.MESSAGE_CLIENT_EXIT);
         try {
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());

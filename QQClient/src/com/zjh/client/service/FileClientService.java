@@ -9,6 +9,7 @@ import com.zjh.utils.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -39,9 +40,10 @@ public class FileClientService {
         //封装Message
         Message message = new Message();
         message.setMsgType(MessageType.MESSAGE_FILE);
-        message.setSender(sender);
-        message.setGetter(getter);
-        String time = new Date().toString();
+        message.setSenderId(sender);
+        message.setGetterId(getter);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time = sdf.format(new Date());
         message.setSendTime(time);
         System.out.println("【"+time+"】 你对" + getter + "发送了：" + fileName);
         message.setFileMsg(fileMsg);

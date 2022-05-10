@@ -6,6 +6,7 @@ import com.zjh.common.MessageType;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -28,12 +29,13 @@ public class MessageClientService {
     public void groupChat(String content,String sender,String getters){
         Message message = new Message();
         message.setMsgType(MessageType.MESSAGE_GROUP_CHAT);
-        message.setSender(sender);
-        message.setGetter(getters);
+        message.setSenderId(sender);
+        message.setGetterId(getters);
         message.setContent(content);
         //Sun May 08 01:11:07 CST 2022
         //时间后期转化为正常格式
-        String time = new Date().toString();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time = sdf.format(new Date());
         message.setSendTime(time);
         System.out.println("【"+time+"】 你对" + getters + "发送了：" +content);
         //从用户集合中拿到当前通讯进程，发送该消息
@@ -53,11 +55,10 @@ public class MessageClientService {
     public void sendMsgToAll(String chatContent,String senderId){
         Message message = new Message();
         message.setMsgType(MessageType.MESSAGE_TO_ALL_MSG);
-        message.setSender(senderId);
+        message.setSenderId(senderId);
         message.setContent(chatContent);
-        //Sun May 08 01:11:07 CST 2022
-        //时间后期转化为正常格式
-        String time = new Date().toString();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time = sdf.format(new Date());
         message.setSendTime(time);
         System.out.println("【"+time+"】 你对所有人发送了：" +chatContent);
         //从用户集合中拿到当前通讯进程，发送该消息
@@ -75,21 +76,22 @@ public class MessageClientService {
      * @param chatContent 聊天内容
      * @param senderId    发件人id
      * @param getterId    getter id
-     *///私聊功能
+     */
+    //私聊功能
     public void privateChat(String chatContent,String senderId,String getterId){
         Message message = new Message();
         message.setMsgType(MessageType.MESSAGE_COMMON_MSG);
-        message.setSender(senderId);
-        message.setGetter(getterId);
+        message.setSenderId(senderId);
+        message.setGetterId(getterId);
         message.setContent(chatContent);
-        //Sun May 08 01:11:07 CST 2022
-        //时间后期转化为正常格式
-        String time = new Date().toString();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time = sdf.format(new Date());
         message.setSendTime(time);
         System.out.println("【"+time+"】 你对" + getterId + "发送了：" +chatContent);
         //从用户集合中拿到当前通讯进程，发送该消息
         try {
             ObjectOutputStream oos = new ObjectOutputStream(ManageClientConnectServerThread.getThread(senderId).getSocket().getOutputStream());
+            System.out.println("私聊" + message);
             oos.writeObject(message);
         } catch (IOException e) {
             e.printStackTrace();

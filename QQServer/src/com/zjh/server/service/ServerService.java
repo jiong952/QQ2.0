@@ -3,6 +3,7 @@ package com.zjh.server.service;
 import com.zjh.common.Message;
 import com.zjh.common.MessageType;
 import com.zjh.common.User;
+import com.zjh.server.dao.UserDao;
 import com.zjh.server.service.thread.ManageServerConnectClientThread;
 import com.zjh.server.service.thread.SendNewsThread;
 import com.zjh.server.service.thread.ServerConnectClientThread;
@@ -12,7 +13,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
  **/
 public class ServerService {
     private ServerSocket serverSocket = null;
+    private UserDao userDao = new UserDao();
     //创建一个集合模拟用户数据库 ,key是userId,value是user
     //使用ConcurrentHashMap可以处理并发问题，线程安全
     private static ConcurrentHashMap<String,User> userHashMap = new ConcurrentHashMap<>();
@@ -57,17 +61,9 @@ public class ServerService {
      * @return boolean
      */
     private boolean checkUser(String userId, String password){
-        boolean b  = false;
-        //用户不存在
-        if(userHashMap.get(userId) == null){
-            return false;
-        }else if(!userHashMap.get(userId).getPassword().equals(password)){
-            //密码不正确
-            return false;
-        }else {
-            b = true;
-        }
-        return b;
+        User check = userDao.check(userId);
+        if(check != null && userId.equals(check.getUserId()) && password.equals(check.getPassword())) return true;
+        return false;
     }
 
     /**
@@ -97,7 +93,9 @@ public class ServerService {
                 if(checkUser(user.getUserId(), user.getPassword())){
                     //实现单点登录
                     if(ManageServerConnectClientThread.getThread(user.getUserId()) == null){
-                        System.out.println(user.getUserId()+ "登录成功" );
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        String time = sdf.format(new Date());
+                        System.out.println("【"+time+"】"+user.getUserId()+ "登录成功" );
                         message.setMsgType(MessageType.MESSAGE_SUCCEED);
                         oos.writeObject(message);
                         //创建一个线程与登录客户端保持通信
@@ -123,14 +121,18 @@ public class ServerService {
                             }
                         }
                     }else {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        String time = sdf.format(new Date());
                         //登录过了
-                        System.out.println(user.getUserId()+ "已登录过");
+                        System.out.println("【"+time+"】"+user.getUserId()+ "已登录过");
                         message.setMsgType(MessageType.MESSAGE_ALREADY_LOGIN);
                         oos.writeObject(message);
                     }
                 }else {
                     //账号名或密码错误
-                    System.out.println(user.getUserId()+ "登录失败" );
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String time = sdf.format(new Date());
+                    System.out.println("【"+time+"】"+user.getUserId()+ "登录失败" );
                     message.setMsgType(MessageType.MESSAGE_LOGIN_FAIL);
                     oos.writeObject(message);
                     socket.close();

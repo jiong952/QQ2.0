@@ -33,7 +33,7 @@ public class QQView {
         while (loop){
             System.out.println("======欢迎登录多用户通信系统======");
             System.out.println("\t\t 1 登录系统");
-            System.out.println("\t\t 9 退出系统");
+            System.out.println("\t\t 0 退出系统");
             System.out.println("请输入你的选择:");
             //输入一位指令,根据指令执行不同逻辑
             key = Utility.readString(1);
@@ -49,12 +49,16 @@ public class QQView {
                         System.out.println("======欢迎用户("+userId+")======");
                         while (loop){
                             System.out.println("\n======多用户通信系统二级菜单======");
-                            System.out.println("\t\t 1 显示在线用户列表");
-                            System.out.println("\t\t 2 群发消息");
+                            System.out.println("\t\t 1 显示所有在线用户列表");
+                            System.out.println("\t\t 2 群发消息给所有好友");
                             System.out.println("\t\t 3 私发消息");
                             System.out.println("\t\t 4 发送文件");
                             System.out.println("\t\t 5 群聊功能");
-                            System.out.println("\t\t 9 退出系统");
+                            System.out.println("\t\t 6 显示好友列表");
+                            System.out.println("\t\t 7 添加好友");
+                            System.out.println("\t\t 8 删除好友");
+                            System.out.println("\t\t 9 修改好友");
+                            System.out.println("\t\t 0 退出系统");
                             System.out.println("请输入你的选择:");
                             //输入一位指令,根据指令执行不同逻辑
                             String command = Utility.readString(1);
@@ -106,7 +110,7 @@ public class QQView {
                                     //这里目前只能在线用户通讯，后期使用数据库将消息存入数据库后就可以实现离线留言功能
                                     messageClientService.groupChat(groupChatContent,userId,getters.toString());
                                     break;
-                                case "9":
+                                case "0":
                                     System.out.println("退出系统成功！");
                                     //调用userClientService的退出方法
                                     userClientService.exit();
@@ -120,7 +124,7 @@ public class QQView {
                         System.out.println("您已登录,请勿重复登录!");
                     }
                     break;
-                case "9":
+                case "0":
                     System.out.println("退出系统");
                     loop = false;
                     break;
