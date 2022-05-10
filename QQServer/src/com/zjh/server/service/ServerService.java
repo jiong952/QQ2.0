@@ -1,8 +1,6 @@
 package com.zjh.server.service;
 
-import com.zjh.common.Message;
-import com.zjh.common.MessageType;
-import com.zjh.common.User;
+import com.zjh.common.*;
 import com.zjh.server.dao.UserDao;
 import com.zjh.server.service.thread.ManageServerConnectClientThread;
 import com.zjh.server.service.thread.SendNewsThread;
@@ -21,11 +19,14 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 服务器端业务逻辑处理
+ * 这是服务器与某个用户的通讯线程
+ * 在这里处理的是双向消息，即要处理返回值的消息，由用户主动发送方法请求，服务端写入，用户主动读取返回值
+ * 例如登录请求，返回好友列表，注册，删除好友，等
  * @author 张俊鸿
  * @date 2022/05/08
  **/
 public class ServerService {
+
     private ServerSocket serverSocket = null;
     private UserDao userDao = new UserDao();
     //创建一个集合模拟用户数据库 ,key是userId,value是user
@@ -70,6 +71,7 @@ public class ServerService {
      * 服务器通讯监听
      */
     public ServerService() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         //服务端在9999端口监听
         try {
             System.out.println("服务器端启动.....");
@@ -80,62 +82,74 @@ public class ServerService {
             //持续监听多用户
             while (true){
                 Socket socket = serverSocket.accept();
+                System.out.println("用户端"+socket);
                 //获取客户端发来的user
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-                User user = (User)ois.readObject();
+                //接收请求
+                RequestMsg requestMsg = (RequestMsg) ois.readObject();
                 //输出流
                 ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                //返回给客户端的消息
-                Message message = new Message();
+                if(("checkUser").equals(requestMsg.getContent())){
+                    //登录验证
+                    User user = (User) requestMsg.getParams()[0];
+                    boolean flag = checkUser(user.getUserId(), user.getPassword());
+                    if(flag){
+                        //登录成功
+                        //检查是否已登录
+                        if(ManageServerConnectClientThread.getThread(user.getUserId()) == null){
 
-                //1.0登录先写死用户名admin 密码123456 后续联合数据库dao
-                //2.0使用HashMap模拟数据库
-                if(checkUser(user.getUserId(), user.getPassword())){
-                    //实现单点登录
-                    if(ManageServerConnectClientThread.getThread(user.getUserId()) == null){
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        String time = sdf.format(new Date());
-                        System.out.println("【"+time+"】"+user.getUserId()+ "登录成功" );
-                        message.setMsgType(MessageType.MESSAGE_SUCCEED);
-                        oos.writeObject(message);
-                        //创建一个线程与登录客户端保持通信
-                        ServerConnectClientThread serverConnectClientThread = new ServerConnectClientThread(user.getUserId(), socket);
-                        //开启线程
-                        serverConnectClientThread.start();
-                        //把登录线程放进集合统一管理
-                        ManageServerConnectClientThread.addThread(user.getUserId(), serverConnectClientThread);
-                        //查看是否有离线消息，有就发送给他
-                        ArrayList<Message> messageList = MangeOffMsgService.getOffMsgMap().get(user.getUserId());
-                        if(messageList != null){
-                            try {
-                                Thread.sleep(100);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            //遍历消息发送
-                            for (Message msg : messageList) {
-                                System.out.println(msg);
-                                ObjectOutputStream os = new ObjectOutputStream(ManageServerConnectClientThread.getThread(user.getUserId()).getSocket().getOutputStream());
-                                os.writeObject(msg);
+                            String time = sdf.format(new Date());
+                            System.out.println("【"+time+"】"+user.getUserId()+ "登录成功" );
+                            //响应成功
+                            ResponseMsg responseMsg = new ResponseMsg();
+                            responseMsg.setStateCode(StateCode.SUCCEED);
+                            oos.writeObject(responseMsg);
+                            //创建一个线程与登录客户端保持通信
+                            ServerConnectClientThread serverConnectClientThread = new ServerConnectClientThread(user.getUserId(), socket);
+                            //开启线程
+                            serverConnectClientThread.start();
+                            //把登录线程放进集合统一管理
+                            ManageServerConnectClientThread.addThread(user.getUserId(), serverConnectClientThread);
+                            //查看是否有离线消息，有就发送给他
+                            ArrayList<Message> messageList = MangeOffMsgService.getOffMsgMap().get(user.getUserId());
+                            if(messageList != null){
+                                try {
+                                    Thread.sleep(100);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                //遍历消息发送
+                                for (Message msg : messageList) {
+                                    System.out.println(msg);
+                                    ObjectOutputStream os = new ObjectOutputStream(ManageServerConnectClientThread.getThread(user.getUserId()).getSocket().getOutputStream());
+                                    os.writeObject(msg);
 
+                                }
                             }
+                        }else {
+                            sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                            String time = sdf.format(new Date());
+                            //登录过了
+                            System.out.println("【"+time+"】"+user.getUserId()+ "已登录过");
+                            //响应已登录
+                            ResponseMsg responseMsg = new ResponseMsg();
+                            responseMsg.setStateCode(StateCode.HAS_LOGIN);
+                            oos.writeObject(responseMsg);
                         }
                     }else {
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        //登录失败
+                        //账号名或密码错误
+                        sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         String time = sdf.format(new Date());
-                        //登录过了
-                        System.out.println("【"+time+"】"+user.getUserId()+ "已登录过");
-                        message.setMsgType(MessageType.MESSAGE_ALREADY_LOGIN);
-                        oos.writeObject(message);
+                        System.out.println("【"+time+"】"+user.getUserId()+ "登录失败" );
+                        //响应失败
+                        ResponseMsg responseMsg = new ResponseMsg();
+                        responseMsg.setStateCode(StateCode.FAIL);
+                        oos.writeObject(responseMsg);
+                        socket.close();
                     }
                 }else {
-                    //账号名或密码错误
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    String time = sdf.format(new Date());
-                    System.out.println("【"+time+"】"+user.getUserId()+ "登录失败" );
-                    message.setMsgType(MessageType.MESSAGE_LOGIN_FAIL);
-                    oos.writeObject(message);
-                    socket.close();
+                    System.out.println("其他");
                 }
             }
         } catch (IOException | ClassNotFoundException e) {

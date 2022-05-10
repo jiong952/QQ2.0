@@ -4,6 +4,7 @@ import com.zjh.client.service.FileClientService;
 import com.zjh.client.service.MessageClientService;
 import com.zjh.client.service.UserClientService;
 import com.zjh.common.MessageType;
+import com.zjh.common.StateCode;
 import com.zjh.utils.Utility;
 
 
@@ -44,8 +45,8 @@ public class QQView {
                     System.out.print("请输入密 码：");
                     String password = Utility.readString(20);
                     //登录验证
-                    String msg = userClientService.checkUser(userId, password);
-                    if(MessageType.MESSAGE_SUCCEED.equals(msg)){
+                    String stateCode = userClientService.checkUser(userId, password);
+                    if(StateCode.SUCCEED.equals(stateCode)){
                         System.out.println("======欢迎用户("+userId+")======");
                         while (loop){
                             System.out.println("\n======多用户通信系统二级菜单======");
@@ -118,9 +119,9 @@ public class QQView {
                                     break;
                             }
                         }
-                    }else if(MessageType.MESSAGE_LOGIN_FAIL.equals(msg)){
+                    }else if(StateCode.FAIL.equals(stateCode)){
                         System.out.println("登录失败 账号名或密码错误！");
-                    }else {
+                    }else if(StateCode.HAS_LOGIN.equals(stateCode)){
                         System.out.println("您已登录,请勿重复登录!");
                     }
                     break;

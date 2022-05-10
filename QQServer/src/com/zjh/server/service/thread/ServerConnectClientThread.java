@@ -1,7 +1,9 @@
 package com.zjh.server.service.thread;
 
+import com.zjh.common.Friend;
 import com.zjh.common.Message;
 import com.zjh.common.MessageType;
+import com.zjh.server.dao.FriendDao;
 import com.zjh.server.service.MangeOffMsgService;
 import com.zjh.server.service.ServerService;
 
@@ -14,11 +16,13 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 服务器连接客户端线程 服务端建立与客户端通讯线程
+ * 这是服务器后台，多对多，和所有在线用户都有想通的管道
+ * 主要转发消息
  * @author 张俊鸿
  * @date 2022/05/08
  **/
 public class ServerConnectClientThread extends Thread{
+    private FriendDao friendDao = new FriendDao();
     //和客户端通讯的socket
     private Socket socket;
     private String userId;
@@ -35,6 +39,7 @@ public class ServerConnectClientThread extends Thread{
     //接受或发送消息
     @Override
     public void run() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         while (true){
             try {
                 System.out.println("服务端通讯线程等待客户端发送的消息......");
@@ -56,7 +61,6 @@ public class ServerConnectClientThread extends Thread{
                     oos.writeObject(msg_back);
                 }else if(MessageType.MESSAGE_CLIENT_EXIT.equals(msg.getMsgType())){
                     //客户端安全退出
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String time = sdf.format(new Date());
                     System.out.println("【"+time+"】用户"+msg.getSenderId() + "退出");
                     //在集合中去除客户端

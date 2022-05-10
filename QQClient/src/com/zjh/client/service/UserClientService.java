@@ -2,9 +2,7 @@ package com.zjh.client.service;
 
 import com.zjh.client.service.thread.ClientConnectServerThread;
 import com.zjh.client.service.thread.ManageClientConnectServerThread;
-import com.zjh.common.Message;
-import com.zjh.common.MessageType;
-import com.zjh.common.User;
+import com.zjh.common.*;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -42,12 +40,18 @@ public class UserClientService {
             System.out.println("socket已连接...");
             //发送序列化用户对象
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-            oos.writeObject(u);
-            //接收服务端返回的消息
+            RequestMsg requestMsg = new RequestMsg();
+            //方法名和参数
+            requestMsg.setContent("checkUser");
+            requestMsg.setParams(new Object[]{u});
+            oos.writeObject(requestMsg);
+            System.out.println(requestMsg);
+            //接收服务端响应的消息
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-            Message msg = (Message)ois.readObject();
-
-            if(MessageType.MESSAGE_SUCCEED.equals(msg.getMsgType())){
+            ResponseMsg responseMsg = (ResponseMsg) ois.readObject();
+            System.out.println(responseMsg);
+            if(StateCode.SUCCEED.equals(responseMsg.getStateCode())){
+                //登录成功
                 /*创建一个和服务端保持通信的线程*/
                 ClientConnectServerThread connectServerThread = new ClientConnectServerThread(socket);
                 //启动线程
@@ -55,20 +59,20 @@ public class UserClientService {
                 connectServerThread.setPriority(10);
                 //为了方便管理多用户，这里创建一个类进行统一管理
                 ManageClientConnectServerThread.addThread(userId,connectServerThread);
-                return MessageType.MESSAGE_SUCCEED;
-            }else if(MessageType.MESSAGE_LOGIN_FAIL.equals(msg.getMsgType())){
+                return StateCode.SUCCEED;
+            }else if(StateCode.FAIL.equals(responseMsg.getStateCode())){
                 //账号名或密码错误,关闭socket
                 socket.close();
-                return MessageType.MESSAGE_LOGIN_FAIL;
-            }else {
+                return StateCode.FAIL;
+            }else if(StateCode.HAS_LOGIN.equals(responseMsg.getStateCode())){
                 //已登录,关闭socket
                 socket.close();
-                return MessageType.MESSAGE_ALREADY_LOGIN;
+                return StateCode.HAS_LOGIN;
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return MessageType.MESSAGE_LOGIN_FAIL;
+        return StateCode.FAIL;
     }
 
     /**

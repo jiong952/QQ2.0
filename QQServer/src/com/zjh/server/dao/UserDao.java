@@ -31,6 +31,12 @@ public class UserDao {
         return row;
     }
 
+    /**
+     * 登录验证
+     *
+     * @param userId 用户id
+     * @return {@link User}
+     */
     public User check(String userId){
         Connection conn;
         User user = new User();

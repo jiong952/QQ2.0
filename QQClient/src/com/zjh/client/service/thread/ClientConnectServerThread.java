@@ -10,14 +10,15 @@ import java.net.Socket;
 import java.util.Date;
 
 /**
- * 客户端连接服务器线程 客户端通讯线程
+ * 这里是客户端与服务端的通讯线程，主要读取或发送消息
+ * 即别的客户端发来的消息，文件等
  * @author 张俊鸿
  * @date 2022/05/08
  **/
 
 
 public class ClientConnectServerThread extends Thread{
-    private Socket socket;
+    private static Socket socket;
 
     public ClientConnectServerThread(Socket socket) {
         this.socket = socket;
@@ -68,6 +69,9 @@ public class ClientConnectServerThread extends Thread{
                     //服务端推送的消息
                     System.out.println("\n=========服务端推送界面=========");
                     System.out.println("【"+msg.getSendTime()+"】"+msg.getSenderId()+"对你发送了：" +msg.getContent());
+                }else if(MessageType.FIND_ALL_FRIEND.equals(msg.getMsgType())){
+                    //返回所有好友
+
                 }else {
                     System.out.println("其他类型msg，暂时不处理");
                 }
