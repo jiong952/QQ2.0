@@ -214,6 +214,19 @@ public class ConnectToSingleThread {
                         ObjectOutputStream os2 = new ObjectOutputStream(ManageServerConnectClientThread.getThread(myId2).getSocket().getOutputStream());
                         os2.writeObject(permitSuccessMsg);
                         break;
+                    case "deleteFriend":
+                        //用户单方面删除好友
+                        String myId5 = requestMsg.getRequesterId();
+                        String friendId5 = (String)requestMsg.getParams()[0];
+                        String time5 = sdf.format(new Date());
+                        System.out.println("【"+time5+"】用户"+myId5+"删除好友"+friendId5);
+                        //调用方法
+                        boolean b1 = friendService.deleteFriend(myId5, friendId5);
+                        //响应
+                        ResponseMsg responseMsg5 = new ResponseMsg();
+                        responseMsg5.setReturnValue(b1);
+                        oos.writeObject(responseMsg5);
+                        break;
                 }
             }
         } catch (IOException | ClassNotFoundException e) {

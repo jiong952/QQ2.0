@@ -26,6 +26,7 @@ public class FriendService {
     public static void main(String[] args) {
 //        System.out.println(new FriendService().findAllFriend("a"));
 //        new FriendService().addFriend("a","bac",new Date());
+//        System.out.println(new FriendService().deleteFriend("s", "jj"));
     }
 
     /**
@@ -36,7 +37,10 @@ public class FriendService {
      */
     public List<Friend> findAllFriend(String userId)  {
         List<Friend> list = null;
+        //正常好友
         list = friendDao.findAllFriend(userId);
+        List<String> ids = friendDao.getDelMeFriend(userId);
+        List<Friend> delMeFriends = userDao.findAllFriend(ids);
         //从在线的所有好友中进行过滤，设置friend的isOnline字段
         HashMap<String, ServerThread> map = ManageServerConnectClientThread.getMap();
         for (Friend friend : list) {
@@ -45,6 +49,8 @@ public class FriendService {
                 friend.setOnLine(true);
             }
         }
+        //被删除的人还是可以看到好友的，这是不能发送消息
+        list.addAll(delMeFriends);
         return list;
     }
 
@@ -104,6 +110,35 @@ public class FriendService {
         //插入askerId myId isAsk = false time
         boolean c = friendDao.addFriend(askerId, myId, false, time);
         if(b&&c) flag = true;
+        return flag;
+    }
+
+    /**
+     * 删除朋友
+     *
+     * @param myId     用户id
+     * @param friendId 朋友id
+     * @return boolean
+     */
+    public boolean deleteFriend(String myId,String friendId){
+        boolean flag = false;
+        //判断是好友,是好友则是单删，不是好友则是删回去
+        boolean b2 = checkFriend(myId, friendId);
+        if(b2){
+            //删除两条好友记录
+            boolean b = friendDao.deleteFriendRecord(myId, friendId);
+            boolean b1 = friendDao.deleteFriendRecord(friendId, myId);
+            //插入一条删除记录
+            boolean c = friendDao.insertDelFriendRecord(myId, friendId);
+            if(b&&b1&&c) flag = true;
+        }else {
+            //删除掉删除记录，彻底删除好友关系
+            boolean b = friendDao.delDelFriendRecord(friendId, myId);
+            //清空消息记录
+            // TODO: 2022-05-12  清空消息记录
+            boolean b1 = true;
+            if(b&b1) flag = true;
+        }
         return flag;
     }
 

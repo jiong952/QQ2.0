@@ -121,6 +121,18 @@ public class QQView {
                                     List<Friend> allFriend = friendService.findAllFriend(userId);
                                     new FriendListView().showFriendList(allFriend);
                                     break;
+                                case "8":
+                                    System.out.println("\n=========删除好友=========");
+                                    // TODO: 2022-05-12 之后就在用户界面用button事件删除，可以加个确定框
+                                    System.out.print("请输入你要删除的好友：");
+                                    String del_friend = Utility.readString(20); //接收者Id
+                                    boolean b = friendService.deleteFriend(userId, del_friend);
+                                    if(b){
+                                        System.out.println("删除好友"+del_friend+"成功");
+                                    }else {
+                                        System.out.println("删除失败");
+                                    }
+                                    break;
                                 case "a":
                                     new SearchUserView(userId).searchUserById();
                                     break;
