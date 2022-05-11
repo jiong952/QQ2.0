@@ -4,6 +4,7 @@ import com.zjh.common.*;
 import com.zjh.server.dao.UserDao;
 import com.zjh.server.service.FriendService;
 import com.zjh.server.service.MangeOffMsgService;
+import com.zjh.server.service.UserService;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -26,8 +27,8 @@ import java.util.concurrent.ConcurrentHashMap;
  **/
 public class ConnectToSingleThread {
     private FriendService friendService = new FriendService();
+    private UserService userService = new UserService();
     private ServerSocket serverSocket = null;
-    private UserDao userDao = new UserDao();
     //创建一个集合模拟用户数据库 ,key是userId,value是user
     //使用ConcurrentHashMap可以处理并发问题，线程安全
     private static ConcurrentHashMap<String,User> userHashMap = new ConcurrentHashMap<>();
@@ -53,18 +54,7 @@ public class ConnectToSingleThread {
         return users;
     }
 
-    /**
-     * 用户登录验证
-     *
-     * @param userId   用户id
-     * @param password 密码
-     * @return boolean
-     */
-    private boolean checkUser(String userId, String password){
-        User check = userDao.check(userId);
-        if(check != null && userId.equals(check.getUserId()) && password.equals(check.getPassword())) return true;
-        return false;
-    }
+
 
     /**
      * 服务器通讯监听
@@ -92,7 +82,7 @@ public class ConnectToSingleThread {
                     case "checkUser":
                         //登录验证
                         User user = (User) requestMsg.getParams()[0];
-                        boolean flag = checkUser(user.getUserId(), user.getPassword());
+                        boolean flag = userService.checkUser(user.getUserId(), user.getPassword());
                         if(flag){
                             //登录成功
                             //检查是否已登录
@@ -162,6 +152,17 @@ public class ConnectToSingleThread {
                         ResponseMsg responseMsg = new ResponseMsg();
                         responseMsg.setReturnValue(list);
                         oos.writeObject(responseMsg);
+                        break;
+                    case "searchUserById":
+                        //根据id模糊查询搜索用户
+                        String time2 = sdf.format(new Date());
+                        System.out.println("【"+time2+"】用户"+requestMsg.getRequesterId() + "搜索用户");
+                        //到db搜索
+                        List<User> list1 = userService.searchUserById((String) requestMsg.getParams()[0]);
+                        //响应
+                        ResponseMsg responseMsg2 = new ResponseMsg();
+                        responseMsg2.setReturnValue(list1);
+                        oos.writeObject(responseMsg2);
                         break;
                 }
             }

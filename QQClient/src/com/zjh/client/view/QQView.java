@@ -3,9 +3,8 @@ package com.zjh.client.view;
 import com.zjh.client.service.FileClientService;
 import com.zjh.client.service.FriendService;
 import com.zjh.client.service.MessageClientService;
-import com.zjh.client.service.UserClientService;
+import com.zjh.client.service.UserService;
 import com.zjh.common.Friend;
-import com.zjh.common.MessageType;
 import com.zjh.common.StateCode;
 import com.zjh.utils.Utility;
 
@@ -19,7 +18,7 @@ import java.util.List;
  * @date 2022/05/08
  */
 public class QQView {
-    private UserClientService userClientService = new UserClientService();
+    private UserService userService = new UserService();
     private MessageClientService messageClientService = new MessageClientService();
     private FileClientService fileClientService = new FileClientService();
     private FriendService friendService = new FriendService();
@@ -50,7 +49,7 @@ public class QQView {
                     System.out.print("请输入密 码：");
                     String password = Utility.readString(20);
                     //登录验证
-                    String stateCode = userClientService.checkUser(userId, password);
+                    String stateCode = userService.checkUser(userId, password);
                     if(StateCode.SUCCEED.equals(stateCode)){
                         System.out.println("======欢迎用户("+userId+")======");
                         while (loop){
@@ -64,6 +63,7 @@ public class QQView {
                             System.out.println("\t\t 7 添加好友");
                             System.out.println("\t\t 8 删除好友");
                             System.out.println("\t\t 9 修改好友");
+                            System.out.println("\t\t a 搜索用户");
                             System.out.println("\t\t 0 退出系统");
                             System.out.println("请输入你的选择:");
                             //输入一位指令,根据指令执行不同逻辑
@@ -71,7 +71,7 @@ public class QQView {
                             switch (command){
                                 case "1":
 //                                    System.out.println("显示在线用户列表");
-                                    userClientService.onLineFriendList();
+                                    userService.onLineFriendList();
                                     //主线程休眠一会，使得用户列表信息先显示
                                     try {
                                         Thread.sleep(100);
@@ -121,10 +121,13 @@ public class QQView {
                                     List<Friend> allFriend = friendService.findAllFriend(userId);
                                     new FriendListView().showFriendList(allFriend);
                                     break;
+                                case "a":
+                                    new SearchUserView().searchUserById();
+                                    break;
                                 case "0":
                                     System.out.println("退出系统成功！");
                                     //调用userClientService的退出方法
-                                    userClientService.exit();
+                                    userService.exit();
                                     loop = false;
                                     break;
                             }

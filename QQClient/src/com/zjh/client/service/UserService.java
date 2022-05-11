@@ -9,6 +9,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 //参考mvc分层，这里做用户客户端的业务逻辑处理
 
@@ -17,7 +19,7 @@ import java.net.Socket;
  * author 张俊鸿
  * @date 2022/05/08
  **/
-public class UserClientService {
+public class UserService {
 
     private User u = new User();
     private Socket socket;
@@ -107,5 +109,33 @@ public class UserClientService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 向服务端请求搜索用户
+     *
+     * @param userId 用户id
+     * @return {@link List}<{@link User}>
+     */
+    public List<User> searchUserById(String userId){
+        List<User> list = new ArrayList<>();
+        try {
+            socket = new Socket(InetAddress.getByName("127.0.0.1"), 9998);
+            //发送序列化用户对象
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            RequestMsg requestMsg = new RequestMsg();
+            //方法名和参数
+            requestMsg.setRequesterId(userId);
+            requestMsg.setContent("searchUserById");
+            requestMsg.setParams(new Object[]{userId});
+            oos.writeObject(requestMsg);
+            //接收服务端响应的消息
+            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            ResponseMsg responseMsg = (ResponseMsg) ois.readObject();
+            list = (List<User>) responseMsg.getReturnValue();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 }
