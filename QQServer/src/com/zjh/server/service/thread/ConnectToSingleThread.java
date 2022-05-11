@@ -164,6 +164,56 @@ public class ConnectToSingleThread {
                         responseMsg2.setReturnValue(list1);
                         oos.writeObject(responseMsg2);
                         break;
+                    case "checkFriend":
+                        //添加好友前查看是否已经是好友
+                        String myId0 = requestMsg.getRequesterId();
+                        String friendId0 = (String)requestMsg.getParams()[0];
+                        String time0 = sdf.format(new Date());
+                        System.out.println("【"+time0+"】用户"+myId0+"查看和"+friendId0+"是否是好友");
+                        //到db检索
+                        boolean b = friendService.checkFriend(myId0, friendId0);
+                        //响应回去
+                        ResponseMsg responseMsg3 = new ResponseMsg();
+                        responseMsg3.setReturnValue(b);
+                        oos.writeObject(responseMsg3);
+                        break;
+                    case "askMakeFriend":
+                        //用户发送好友申请
+                        String myId = requestMsg.getRequesterId();
+                        String friendId = (String)requestMsg.getParams()[0];
+                        String time3 = sdf.format(new Date());
+                        System.out.println("【"+time3+"】用户"+myId+"向"+friendId+"发送好友申请");
+                        //转发好友申请消息
+                        Message msg = new Message();
+                        msg.setMsgType(MessageType.ASK_MAKE_FRIEND);
+                        msg.setSenderId(myId);
+                        msg.setGetterId(friendId);
+                        ObjectOutputStream os = new ObjectOutputStream(ManageServerConnectClientThread.getThread(friendId).getSocket().getOutputStream());
+                        os.writeObject(msg);
+                        break;
+                    case "permitMakeFriend":
+                        //用户同意好友请求
+                        String myId2 = requestMsg.getRequesterId();
+                        String askerId = (String)requestMsg.getParams()[0];
+                        Date date = new Date();
+                        String time4 = sdf.format(date);
+                        System.out.println("【"+time4+"】用户"+myId2+"同意"+askerId+"的好友请求");
+                        friendService.addFriend(myId2,askerId,date);
+                        //通知申请人成功
+                        Message askSuccessMsg = new Message();
+                        askSuccessMsg.setMsgType(MessageType.SUCCESS_MAKE_FRIEND_TO_ASK);
+                        askSuccessMsg.setGetterId(askerId);
+                        askSuccessMsg.setSenderId(myId2);
+                        ObjectOutputStream os1 = new ObjectOutputStream(ManageServerConnectClientThread.getThread(askerId).getSocket().getOutputStream());
+                        os1.writeObject(askSuccessMsg);
+                        //通知同意者成功
+                        Message permitSuccessMsg = new Message();
+                        permitSuccessMsg.setMsgType(MessageType.SUCCESS_MAKE_FRIEND_TO_PERMIT);
+                        permitSuccessMsg.setGetterId(myId2);
+                        permitSuccessMsg.setSenderId(askerId);
+                        ObjectOutputStream os2 = new ObjectOutputStream(ManageServerConnectClientThread.getThread(myId2).getSocket().getOutputStream());
+                        os2.writeObject(permitSuccessMsg);
+                        break;
                 }
             }
         } catch (IOException | ClassNotFoundException e) {

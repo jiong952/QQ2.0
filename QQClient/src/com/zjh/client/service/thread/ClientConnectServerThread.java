@@ -1,9 +1,9 @@
 package com.zjh.client.service.thread;
 
-import com.zjh.client.service.FileClientService;
 import com.zjh.client.service.FriendService;
 import com.zjh.client.view.FriendListView;
-import com.zjh.client.view.NewFriendView;
+import com.zjh.client.view.FriendsVerifyView;
+import com.zjh.client.view.NotificationView;
 import com.zjh.common.Friend;
 import com.zjh.common.Message;
 import com.zjh.common.MessageType;
@@ -77,9 +77,25 @@ public class ClientConnectServerThread extends Thread{
                     System.out.println("【"+msg.getSendTime()+"】"+msg.getSenderId()+"对你发送了：" +msg.getContent());
                 }else if(MessageType.NEW_ONLINE.equals(msg.getMsgType())){
                     //新好友上线
+                    new NotificationView().onLineRemind(msg.getSenderId());
+                    //刷新好友列表
                     List<Friend> allFriend = new FriendService().findAllFriend(msg.getGetterId());
                     new FriendListView().showFriendList(allFriend);
-                    new NewFriendView().onLineRemind(msg.getSenderId());
+                }else if(MessageType.ASK_MAKE_FRIEND.equals(msg.getMsgType())){
+                    //好友申请
+                    new FriendsVerifyView().addVerifyRecord(msg.getSenderId(),msg.getGetterId());
+                }else if(MessageType.SUCCESS_MAKE_FRIEND_TO_ASK.equals(msg.getMsgType())){
+                    //申请好友成功
+                    new NotificationView().askMakeFriendSuccess(msg.getSenderId());
+                    //刷新好友列表
+                    List<Friend> allFriend = new FriendService().findAllFriend(msg.getGetterId());
+                    new FriendListView().showFriendList(allFriend);
+                }else if(MessageType.SUCCESS_MAKE_FRIEND_TO_PERMIT.equals(msg.getMsgType())){
+                    //同意好友申请成功
+                    new NotificationView().permitMakeFriendSuccess(msg.getSenderId());
+                    //刷新好友列表
+                    List<Friend> allFriend = new FriendService().findAllFriend(msg.getGetterId());
+                    new FriendListView().showFriendList(allFriend);
                 }else {
                     System.out.println("其他类型msg，暂时不处理");
                 }

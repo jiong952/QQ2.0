@@ -19,5 +19,8 @@ public interface MessageType {
     String MESSAGE_FILE = "10"; //文件信息包
     String MESSAGE_NEWS = "11"; //服务端推送消息
     String NEW_ONLINE = "12"; //有新的好友上线了
+    String ASK_MAKE_FRIEND = "13"; //好友请求
+    String SUCCESS_MAKE_FRIEND_TO_ASK = "14"; //给发送好友申请的人成功提醒
+    String SUCCESS_MAKE_FRIEND_TO_PERMIT = "15"; //给同意好友申请的人成功提醒
 
 }

@@ -60,10 +60,10 @@ public class QQView {
                             System.out.println("\t\t 4 发送文件");
                             System.out.println("\t\t 5 群聊功能");
                             System.out.println("\t\t 6 显示好友列表");
-                            System.out.println("\t\t 7 添加好友");
+                            System.out.println("\t\t 7 添加好友|不用");
                             System.out.println("\t\t 8 删除好友");
                             System.out.println("\t\t 9 修改好友");
-                            System.out.println("\t\t a 搜索用户");
+                            System.out.println("\t\t a 添加好友 | 搜索用户");
                             System.out.println("\t\t 0 退出系统");
                             System.out.println("请输入你的选择:");
                             //输入一位指令,根据指令执行不同逻辑
@@ -122,7 +122,7 @@ public class QQView {
                                     new FriendListView().showFriendList(allFriend);
                                     break;
                                 case "a":
-                                    new SearchUserView().searchUserById();
+                                    new SearchUserView(userId).searchUserById();
                                     break;
                                 case "0":
                                     System.out.println("退出系统成功！");

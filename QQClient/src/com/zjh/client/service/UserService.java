@@ -117,7 +117,7 @@ public class UserService {
      * @param userId 用户id
      * @return {@link List}<{@link User}>
      */
-    public List<User> searchUserById(String userId){
+    public List<User> searchUserById(String myId,String userId){
         List<User> list = new ArrayList<>();
         try {
             socket = new Socket(InetAddress.getByName("127.0.0.1"), 9998);
@@ -125,7 +125,7 @@ public class UserService {
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             RequestMsg requestMsg = new RequestMsg();
             //方法名和参数
-            requestMsg.setRequesterId(userId);
+            requestMsg.setRequesterId(myId);
             requestMsg.setContent("searchUserById");
             requestMsg.setParams(new Object[]{userId});
             oos.writeObject(requestMsg);

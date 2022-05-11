@@ -10,6 +10,7 @@ import com.zjh.server.service.thread.ServerThread;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,7 +24,8 @@ public class FriendService {
     private FriendDao friendDao = new FriendDao();
 
     public static void main(String[] args) {
-        System.out.println(new FriendService().findAllFriend("a"));
+//        System.out.println(new FriendService().findAllFriend("a"));
+//        new FriendService().addFriend("a","bac",new Date());
     }
 
     /**
@@ -73,6 +75,36 @@ public class FriendService {
 
             }
         }
+    }
+    /**
+     * 添加好友之前检查是否已经是好友
+     *
+     * @param myId 用户id
+     * @param friendId 好友Id
+     * @return boolean true表示好友
+     */
+    public boolean checkFriend(String myId,String friendId){
+        boolean flag = false;
+        flag = friendDao.checkFriend(myId,friendId);
+        return flag;
+    }
+
+    /**
+     * 往记录表中插入两条记录，区分申请和同意人
+     *
+     * @param myId    同意者
+     * @param askerId 申请者
+     * @param time    时间
+     * @return boolean
+     */
+    public boolean addFriend(String myId, String askerId, Date time){
+        boolean flag = false;
+        //插入myId askerId isAsk = true time
+        boolean b = friendDao.addFriend(myId, askerId, true, time);
+        //插入askerId myId isAsk = false time
+        boolean c = friendDao.addFriend(askerId, myId, false, time);
+        if(b&&c) flag = true;
+        return flag;
     }
 
 }
