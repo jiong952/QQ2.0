@@ -34,7 +34,6 @@ public class FriendService {
         List<Friend> list = null;
         try {
             socket = new Socket(InetAddress.getByName("127.0.0.1"), 9998);
-            System.out.println("用户请求拉取");
             //发送序列化用户对象
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             RequestMsg requestMsg = new RequestMsg();

@@ -74,7 +74,7 @@ public class QQView {
                                     userClientService.onLineFriendList();
                                     //主线程休眠一会，使得用户列表信息先显示
                                     try {
-                                        Thread.sleep(500);
+                                        Thread.sleep(100);
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
@@ -119,9 +119,7 @@ public class QQView {
                                 case "6":
                                     System.out.println("\n=========好友列表=========");
                                     List<Friend> allFriend = friendService.findAllFriend(userId);
-                                    for (Friend friend : allFriend) {
-                                        System.out.println(friend);
-                                    }
+                                    new FriendListView().showFriendList(allFriend);
                                     break;
                                 case "0":
                                     System.out.println("退出系统成功！");

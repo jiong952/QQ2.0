@@ -1,5 +1,10 @@
 package com.zjh.client.service.thread;
 
+import com.zjh.client.service.FileClientService;
+import com.zjh.client.service.FriendService;
+import com.zjh.client.view.FriendListView;
+import com.zjh.client.view.NewFriendView;
+import com.zjh.common.Friend;
 import com.zjh.common.Message;
 import com.zjh.common.MessageType;
 import com.zjh.utils.FileUtils;
@@ -8,6 +13,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 这里是客户端与服务端的通讯线程，主要读取或发送消息
@@ -69,9 +75,11 @@ public class ClientConnectServerThread extends Thread{
                     //服务端推送的消息
                     System.out.println("\n=========服务端推送界面=========");
                     System.out.println("【"+msg.getSendTime()+"】"+msg.getSenderId()+"对你发送了：" +msg.getContent());
-                }else if(MessageType.FIND_ALL_FRIEND.equals(msg.getMsgType())){
-                    //返回所有好友
-
+                }else if(MessageType.NEW_ONLINE.equals(msg.getMsgType())){
+                    //新好友上线
+                    List<Friend> allFriend = new FriendService().findAllFriend(msg.getGetterId());
+                    new FriendListView().showFriendList(allFriend);
+                    new NewFriendView().onLineRemind(msg.getSenderId());
                 }else {
                     System.out.println("其他类型msg，暂时不处理");
                 }

@@ -110,7 +110,10 @@ public class ConnectToSingleThread {
                                 serverThread.start();
                                 //把登录线程放进集合统一管理
                                 ManageServerConnectClientThread.addThread(user.getUserId(), serverThread);
+                                //增加一个notifyFriend方法，通知其他好友上线状态【发一个msg到监听线程，getterId是其他用户，senderId是上线用户】
+                                //client收到消息后，在调用方法，更新好友列表字段
                                 //查看是否有离线消息，有就发送给他
+                                friendService.notifyOther(user.getUserId());
                                 ArrayList<Message> messageList = MangeOffMsgService.getOffMsgMap().get(user.getUserId());
                                 if(messageList != null){
                                     try {

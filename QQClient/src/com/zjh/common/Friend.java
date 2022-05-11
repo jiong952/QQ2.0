@@ -175,4 +175,5 @@ public class Friend implements Serializable {
     public void setGroup(Set<String> group) {
         this.group = group;
     }
+
 }
