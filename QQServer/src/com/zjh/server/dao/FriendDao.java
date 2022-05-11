@@ -173,5 +173,17 @@ public class FriendDao {
         }
         return ids;
     }
+    public boolean updateFriend(String userId,Friend friend){
+        boolean flag = false;
+        Object[] params = {friend.getRemark(),friend.isStar(),userId,friend.getFriendId()};
+        String sql = "UPDATE `friend` SET `remark` = ? ,`star` = ? WHERE `my_id` = ? AND `friend_id` = ?";
+        try {
+            int update = queryRunner.update(sql, params);
+            if(update > 0) flag = true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return flag;
+    }
 
 }

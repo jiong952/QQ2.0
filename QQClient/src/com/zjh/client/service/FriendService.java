@@ -154,4 +154,35 @@ public class FriendService {
         }
         return flag;
     }
+
+    /**
+     * 更新对好友的备注，星标等
+     *
+     * @param myId     我身份证
+     * @param friendId 朋友id
+     * @param remark   备注
+     * @param star     明星
+     * @return boolean
+     */
+    public boolean updateFriend(String myId,String friendId,String remark,Boolean star){
+        boolean flag = false;
+        try {
+            socket = new Socket(InetAddress.getByName("127.0.0.1"), 9998);
+            //发送序列化用户对象
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            RequestMsg requestMsg = new RequestMsg();
+            //方法名和参数
+            requestMsg.setRequesterId(myId);
+            requestMsg.setContent("updateFriend");
+            requestMsg.setParams(new Object[]{friendId,remark,star});
+            oos.writeObject(requestMsg);
+            //接收服务端响应的消息
+            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            ResponseMsg responseMsg = (ResponseMsg) ois.readObject();
+            flag = (boolean)responseMsg.getReturnValue();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return flag;
+    }
 }

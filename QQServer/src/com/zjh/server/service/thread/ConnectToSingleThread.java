@@ -227,6 +227,21 @@ public class ConnectToSingleThread {
                         responseMsg5.setReturnValue(b1);
                         oos.writeObject(responseMsg5);
                         break;
+                    case "updateFriend":
+                        //更新对好友的备注
+                        String myId6 = requestMsg.getRequesterId();
+                        String friendId6 = (String)requestMsg.getParams()[0];
+                        String remark = (String)requestMsg.getParams()[1];
+                        Boolean star = (Boolean)requestMsg.getParams()[2];
+                        String time6 = sdf.format(new Date());
+                        System.out.println("【"+time6+"】用户"+myId6+"更新好友"+friendId6);
+                        //调用方法
+                        boolean b2 = friendService.updateFriend(myId6, friendId6, remark, star);
+                        //响应
+                        ResponseMsg responseMsg6 = new ResponseMsg();
+                        responseMsg6.setReturnValue(b2);
+                        oos.writeObject(responseMsg6);
+                        break;
                 }
             }
         } catch (IOException | ClassNotFoundException e) {

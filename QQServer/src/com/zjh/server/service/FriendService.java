@@ -27,6 +27,7 @@ public class FriendService {
 //        System.out.println(new FriendService().findAllFriend("a"));
 //        new FriendService().addFriend("a","bac",new Date());
 //        System.out.println(new FriendService().deleteFriend("s", "jj"));
+        System.out.println(new FriendService().updateFriend("admin", "a", "这是好人", true));
     }
 
     /**
@@ -142,4 +143,23 @@ public class FriendService {
         return flag;
     }
 
+    /**
+     * 更新对朋友的备注以及星标
+     *
+     * @param userId   用户id
+     * @param friendId 朋友id
+     * @param remark   备注
+     * @param star     明星
+     * @return boolean
+     */
+    public boolean updateFriend(String userId,String friendId,String remark,Boolean star){
+        // TODO: 2022-05-12 可以拓展分组
+        boolean flag = false;
+        Friend friend = new Friend();
+        friend.setFriendId(friendId);
+        friend.setRemark(remark);
+        friend.setStar(star);
+        flag = friendDao.updateFriend(userId,friend);
+        return flag;
+    }
 }

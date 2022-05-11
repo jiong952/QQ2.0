@@ -17,6 +17,7 @@ import java.util.List;
  * @author 张俊鸿
  * @date 2022/05/08
  */
+@SuppressWarnings("all")
 public class QQView {
     private UserService userService = new UserService();
     private MessageClientService messageClientService = new MessageClientService();
@@ -125,13 +126,29 @@ public class QQView {
                                     System.out.println("\n=========删除好友=========");
                                     // TODO: 2022-05-12 之后就在用户界面用button事件删除，可以加个确定框
                                     System.out.print("请输入你要删除的好友：");
-                                    String del_friend = Utility.readString(20); //接收者Id
+                                    String del_friend = Utility.readString(20);
                                     boolean b = friendService.deleteFriend(userId, del_friend);
                                     if(b){
                                         System.out.println("删除好友"+del_friend+"成功");
                                     }else {
                                         System.out.println("删除失败");
                                     }
+                                    break;
+                                case "9":
+                                    System.out.println("\n=========好友列表=========");
+                                    List<Friend> allFriend2 = friendService.findAllFriend(userId);
+                                    new FriendListView().showFriendList(allFriend2);
+                                    // TODO: 2022-05-12 之后在页面，设置一个按钮，一点击，携带所有参数进入UpdateFriendView页面
+                                    System.out.print("请输入你要修改好友的信息：");
+                                    String update_friend = Utility.readString(20);
+                                    Friend updateFriend = null;
+                                    for (Friend friend : allFriend2) {
+                                        if(friend.getFriendId().equals(update_friend)){
+                                            updateFriend = friend;
+                                            break;
+                                        }
+                                    }
+                                    new UpdateFriendView(userId).update(updateFriend);
                                     break;
                                 case "a":
                                     new SearchUserView(userId).searchUserById();
