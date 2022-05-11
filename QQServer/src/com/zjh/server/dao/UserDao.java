@@ -23,7 +23,6 @@ public class UserDao {
     public static void main(String[] args) {
         ArrayList<String> list = new ArrayList<>();
         list.add("a");
-        System.out.println(new UserDao().findAllFriend(list));
     }
 
     public int register()  {
@@ -62,7 +61,7 @@ public class UserDao {
 
     /**
      * 根据好友id返回好友信息
-     *
+     * 暂时不用了
      * @param list 列表
      * @return {@link List}<{@link Friend}>
      */

@@ -35,7 +35,7 @@ public class ConnectToSingleThread {
         //静态代码块 初始化 validUsers
         userHashMap.put("admin",new User("admin","a"));
         userHashMap.put("张俊鸿",new User("张俊鸿","a"));
-        userHashMap.put("zjh",new User("zjh","a"));
+        userHashMap.put("com.zjh.server.utils.zjh",new User("com.zjh.server.utils.zjh","a"));
         userHashMap.put("a",new User("a","a"));
     }
 

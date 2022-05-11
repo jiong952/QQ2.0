@@ -1,11 +1,7 @@
 package com.zjh.server.dao;
 
 import com.zjh.common.Friend;
-import com.zjh.common.FriendShip;
-import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
-import org.apache.commons.dbutils.handlers.ColumnListHandler;
-import org.junit.Test;
 
 import static com.zjh.server.utils.MyDsUtils.*;
 import java.sql.SQLException;
@@ -19,35 +15,31 @@ import java.util.List;
  */
 public class FriendDao {
     public static void main(String[] args) {
-        System.out.println(new FriendDao().findAllFriendId("a"));
+
     }
 
+
     /**
-     * 返回所有好友
+     * 获取好友列表
      *
      * @param userId 用户id
-     * @return {@link List}<{@link String}>
+     * @return {@link List}<{@link Friend}>
      */
-    public List<String> findAllFriendId(String userId)  {
-        List<String> list = new ArrayList<>();
-        List<FriendShip> friendShips;
-        Object[] params ={userId,userId};
-        //返回所有好友
-        String sql ="SELECT `asker_id`  AS askerId , `permitter_id`  AS permitterId  FROM `friend_rel` WHERE `asker_id` = ? OR `permitter_id` = ?";
+    public List<Friend> findAllFriend(String userId){
+        List<Friend> list = new ArrayList<>();
+        String sql ="SELECT `friend_id` AS friendId,`is_ask` AS isAsk,`star` \n" +
+                "AS star,`remark` AS remark,f.`create_time` AS `time`,\n" +
+                "`user_name` AS friendName,`avatar` AS avatar,`gender` AS gender,\n" +
+                "`age` AS age,`phone_number` AS phoneNumber\n" +
+                "FROM `friend`  f\n" +
+                "INNER JOIN `user` u\n" +
+                "ON u.`user_id` = f.`my_id`\n" +
+                "WHERE `my_id` = ?";
         try {
-            friendShips=queryRunner.query(sql, new BeanListHandler<>(FriendShip.class),params);
+            list = queryRunner.query(sql, new BeanListHandler<>(Friend.class),userId);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new DaoException("获取好友列表id",e);
-        }
-        if(friendShips != null){
-            for (FriendShip friendShip : friendShips) {
-                if(userId.equals(friendShip.getAskerId())){
-                    list.add(friendShip.getPermitterId());
-                }else if(userId.equals(friendShip.getPermitterId())){
-                    list.add(friendShip.getAskerId());
-                }
-            }
+            throw new DaoException("获取好友列表异常",e);
         }
         return list;
     }

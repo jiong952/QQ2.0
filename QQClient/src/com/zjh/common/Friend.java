@@ -2,6 +2,7 @@ package com.zjh.common;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Set;
 
 /**
@@ -27,12 +28,17 @@ public class Friend implements Serializable {
     private String phoneNumber;
     /**备注**/
     private String remark;
+    /**这个好友是否是发送好友申请的人**/
+    private boolean isAsk;
     /**表示是否是星标好友**/
     private boolean star;
     /**分组:后续功能运行用户设置分组，可拓展为权限，某发言仅分组可见
      * 分组可有多个
      * 暂定组id，后续可加一个组类**/
     private Set<String> group;
+    /**成为好友的时间**/
+    private Date time;
+
 
     @Override
     public String toString() {
@@ -45,12 +51,14 @@ public class Friend implements Serializable {
                 ", age=" + age +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", remark='" + remark + '\'' +
+                ", isAsk=" + isAsk +
                 ", star=" + star +
                 ", group=" + group +
+                ", time=" + time +
                 '}';
     }
 
-    public Friend(String friendId, String friendName, boolean onLine, byte[] avatar, int gender, int age, String phoneNumber, String remark, boolean star, Set<String> group) {
+    public Friend(String friendId, String friendName, boolean onLine, byte[] avatar, int gender, int age, String phoneNumber, String remark, boolean isAsk, boolean star, Set<String> group, Date time) {
         this.friendId = friendId;
         this.friendName = friendName;
         this.onLine = onLine;
@@ -59,11 +67,29 @@ public class Friend implements Serializable {
         this.age = age;
         this.phoneNumber = phoneNumber;
         this.remark = remark;
+        this.isAsk = isAsk;
         this.star = star;
         this.group = group;
+        this.time = time;
+    }
+
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
     }
 
     public Friend() {
+    }
+
+    public boolean isAsk() {
+        return isAsk;
+    }
+
+    public void setAsk(boolean ask) {
+        isAsk = ask;
     }
 
     public static long getSerialVersionUID() {

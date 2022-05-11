@@ -20,8 +20,7 @@ public class FriendService {
     }
     public List<Friend> findAllFriend(String userId)  {
         List<Friend> list = null;
-        List<String> friendIdList = friendDao.findAllFriendId(userId);
-        list = userDao.findAllFriend(friendIdList);
+        list = friendDao.findAllFriend(userId);
         return list;
     }
 }
