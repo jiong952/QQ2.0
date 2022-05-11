@@ -86,14 +86,14 @@ public class QQView {
                                     messageClientService.sendMsgToAll(toALLContent,userId);
                                     break;
                                 case "3":
-                                    System.out.println("\n=========私聊界面=========");
+                                    List<Friend> allFriend0 = friendService.findAllFriend(userId);
+                                    new FriendListView().showFriendList(allFriend0);
                                     System.out.print("请输入你要聊天的用户：");
                                     //这里目前只能在线用户通讯，后期使用数据库将消息存入数据库后就可以实现离线留言功能
                                     String getterId = Utility.readString(20); //接收者Id
-                                    System.out.print("请输入发送的内容：");
-                                    String chatContent = Utility.readString(100); //聊天内容
-                                    //调用一个MessageClientService的发送消息
-                                    messageClientService.privateChat(chatContent,userId,getterId);
+                                    // TODO: 2022-05-12 之后在页面，设置一个按钮，一点击，携带所有参数进入ChatView页面
+                                    new ChatView(userId,getterId).chat();
+
                                     break;
                                 case "4":
                                     System.out.print("请输入你要发送文件的用户：");
@@ -118,7 +118,6 @@ public class QQView {
                                     messageClientService.groupChat(groupChatContent,userId,getters.toString());
                                     break;
                                 case "6":
-                                    System.out.println("\n=========好友列表=========");
                                     List<Friend> allFriend = friendService.findAllFriend(userId);
                                     new FriendListView().showFriendList(allFriend);
                                     break;
@@ -135,7 +134,6 @@ public class QQView {
                                     }
                                     break;
                                 case "9":
-                                    System.out.println("\n=========好友列表=========");
                                     List<Friend> allFriend2 = friendService.findAllFriend(userId);
                                     new FriendListView().showFriendList(allFriend2);
                                     // TODO: 2022-05-12 之后在页面，设置一个按钮，一点击，携带所有参数进入UpdateFriendView页面
