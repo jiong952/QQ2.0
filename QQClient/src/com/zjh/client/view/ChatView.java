@@ -49,7 +49,7 @@ public class ChatView extends JFrame {
      */
     public void addMessage(Message message){
         // TODO: 2022-05-12 把消息加进去，重新刷新页面
-        System.out.println("【"+message.getSendTime()+"】" + (message.getSenderId() == userId ? "你" : message.getSenderId()) + "发送了：" +message.getContent());
+        System.out.println("【"+message.getSendTime()+"】" + (message.getSenderId().equals(userId) ? "你" : message.getSenderId()) + "发送了：" +message.getContent());
     }
 
     /**

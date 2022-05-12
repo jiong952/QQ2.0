@@ -1,13 +1,17 @@
 package com.zjh.client.service;
 
 import com.zjh.client.manage.ManageClientConnectServerThread;
-import com.zjh.common.Message;
-import com.zjh.common.MessageType;
+import com.zjh.common.*;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 消息客户端服务客户端聊天功能业务逻辑
@@ -18,7 +22,7 @@ import java.util.Date;
 
 public class MessageService {
 
-
+    private Socket socket;
     /**
      * 群聊功能，选择指定好友发送
      *
@@ -62,7 +66,6 @@ public class MessageService {
         Date date = new Date();
         String time = sdf.format(date);
         message.setSendTime(date);
-        System.out.println("【"+time+"】 你对所有人发送了：" +chatContent);
         //从用户集合中拿到当前通讯进程，发送该消息
         try {
             ObjectOutputStream oos = new ObjectOutputStream(ManageClientConnectServerThread.getThread(senderId).getSocket().getOutputStream());
@@ -100,6 +103,33 @@ public class MessageService {
             e.printStackTrace();
         }
     }
-
+    /**
+     * 私聊获取聊天记录 普通消息 文件消息 群发消息
+     *
+     * @param myId     用户id
+     * @param friendId 聊天朋友id
+     * @return {@link List}<{@link Message}>
+     */
+    public List<Message> getAllMsg(String myId,String friendId){
+        List<Message> list = new ArrayList<>();
+        try {
+            socket = new Socket(InetAddress.getByName(StaticString.server_ip), StaticString.server_port);
+            //发送序列化用户对象
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            RequestMsg requestMsg = new RequestMsg();
+            //方法名和参数
+            requestMsg.setRequesterId(myId);
+            requestMsg.setContent("getAllMsg");
+            requestMsg.setParams(new Object[]{friendId});
+            oos.writeObject(requestMsg);
+            //接收服务端响应的消息
+            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            ResponseMsg responseMsg = (ResponseMsg) ois.readObject();
+            list = (List<Message>) responseMsg.getReturnValue();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 
 }

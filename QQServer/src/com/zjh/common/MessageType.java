@@ -24,5 +24,6 @@ public interface MessageType {
     String SUCCESS_MAKE_FRIEND_TO_PERMIT = "15"; //给同意好友申请的人成功提醒
     String SEND_SUCCESS = "16";//消息发送成功
     String NEW_OFFLINE = "17"; //有好友下线了
+    String SEND_SUCCESS_TO_ALL = "18";//群发成功
 
 }

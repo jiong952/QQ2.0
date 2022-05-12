@@ -26,11 +26,11 @@ public class MessageDao {
 //        message.setSendTime(new Date());
 //        System.out.println(new MessageDao().insertMsg(message, true));
 //        System.out.println(new MessageDao().updateMsg(7));
-        List<Message> allMsg = new MessageDao().getAllMsg("a", "zjh");
-//        List<Message> allMsg = new MessageDao().getOffLineMsg("a");
-        for (Message message : allMsg) {
-            System.out.println(message);
-        }
+//        List<Message> allMsg = new MessageDao().getAllMsg("a", "zjh");
+////        List<Message> allMsg = new MessageDao().getOffLineMsg("a");
+//        for (Message message : allMsg) {
+//            System.out.println(message);
+//        }
 //        new MessageDao().clearMsg("a","zjh");
     }
 

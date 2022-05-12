@@ -131,6 +131,9 @@ public class ClientConnectServerThread extends Thread{
                 }else if(MessageType.SEND_SUCCESS.equals(msg.getMsgType())){
                     //发送消息成功
                     new ChatView(msg.getSenderId(),msg.getGetterId()).addMessage(msg);
+                }else if(MessageType.SEND_SUCCESS_TO_ALL.equals(msg.getMsgType())){
+                    //发送消息成功
+                    System.out.println("群发给所有好友"+msg.getContent()+"成功");
                 }else {
                     System.out.println("其他类型msg，暂时不处理");
                 }

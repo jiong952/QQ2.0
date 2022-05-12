@@ -1,5 +1,6 @@
 package com.zjh.server.thread;
 
+import com.zjh.common.Friend;
 import com.zjh.common.Message;
 import com.zjh.common.MessageType;
 import com.zjh.server.dao.FriendDao;
@@ -89,8 +90,6 @@ public class ServerThread extends Thread{
                     }else {
                         //离线存入暂存
                         flag =  messageService.insertMsg(msg,false);
-//                        MangeOffMsgService.addOffMsg(msg.getGetterId(),msg);
-//                        System.out.println(MangeOffMsgService.getOffMsgMap());
                     }
                     if(flag){
                         //消息发送成功，返回给用户
@@ -99,29 +98,36 @@ public class ServerThread extends Thread{
                         oos.writeObject(msg);
                     }
                 }else if(MessageType.MESSAGE_TO_ALL_MSG.equals(msg.getMsgType())){
-                    //群发功能 给除了自己之外的所有人
-                    System.out.println("【"+msg.getSendTime()+"】"+msg.getSenderId() + " 向所有人发送了: "+msg.getContent());
+                    //群发功能 给除了自己之外的好友
+                    System.out.println("【"+msg.getSendTime()+"】"+msg.getSenderId() + " 向所有好友发送了: "+msg.getContent());
                     //服务端承担消息转发的作用
                     //获取在线列表，去除自己
-                    List<String> userList = ConnectToSingleControllerThread.getAllUser();
-//                    String onlineUserList = ManageServerConnectClientThread.returnOnlineUserList();
-//                    String[] users = onlineUserList.split(" ");
-                    for (int i = 0; i < userList.size(); i++) {
+                    List<Friend> allFriend = friendService.findAllFriend(msg.getSenderId());
+                    Boolean flag = true;
+                    ServerThread thread2 = ManageServerConnectClientThread.getThread(msg.getSenderId());
+                    for (int i = 0; i < allFriend.size(); i++) {
                         //校验，排除自己
-                        if(!userList.get(i).equals(msg.getSenderId())){
+                        if(!allFriend.get(i).equals(msg.getSenderId())){
                             //查看是否在线
-                            ServerThread thread = ManageServerConnectClientThread.getThread(userList.get(i));
+                            ServerThread thread = ManageServerConnectClientThread.getThread(allFriend.get(i).getFriendId());
                             if(thread != null){
                                 //在线直接发送
                                 ObjectOutputStream oos = new ObjectOutputStream(thread.getSocket().getOutputStream());
                                 oos.writeObject(msg);
+                                msg.setGetterId(allFriend.get(i).getFriendId());
+                                flag = messageService.insertMsg(msg,true);
                             }else {
-                                //不在线，要留言
-                                //离线存入暂存
-                                MangeOffMsgService.addOffMsg(userList.get(i),msg);
-//                                System.out.println(MangeOffMsgService.getOffMsgMap());
+                                //留言
+                                msg.setGetterId(allFriend.get(i).getFriendId());
+                                flag = messageService.insertMsg(msg,false);
                             }
                         }
+                    }
+                    if(flag){
+                        //消息发送成功，返回给用户
+                        ObjectOutputStream oos = new ObjectOutputStream(thread2.getSocket().getOutputStream());
+                        msg.setMsgType(MessageType.SEND_SUCCESS_TO_ALL);
+                        oos.writeObject(msg);
                     }
 
                 }else if(MessageType.MESSAGE_GROUP_CHAT.equals(msg.getMsgType())){

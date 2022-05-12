@@ -262,6 +262,19 @@ public class ConnectToSingleControllerThread {
                         responseMsg6.setReturnValue(b2);
                         oos.writeObject(responseMsg6);
                         break;
+                    case "getAllMsg":
+                        //查找聊天记录
+                        String myId7 = requestMsg.getRequesterId();
+                        String friendId7 = (String)requestMsg.getParams()[0];
+                        String time7 = sdf.format(new Date());
+                        System.out.println("【"+time7+"】用户"+myId7+"查找和"+friendId7+"的聊天记录");
+                        //调用方法
+                        List<Message> allMsg = messageService.getAllMsg(myId7, friendId7);
+                        //响应
+                        ResponseMsg responseMsg7 = new ResponseMsg();
+                        responseMsg7.setReturnValue(allMsg);
+                        oos.writeObject(responseMsg7);
+                        break;
                     default:
                         //响应
                         ResponseMsg default_msg = new ResponseMsg();
