@@ -6,6 +6,7 @@ import com.zjh.server.service.FriendService;
 import com.zjh.server.service.MangeOffMsgService;
 import com.zjh.server.service.MessageService;
 import com.zjh.server.service.UserService;
+import com.zjh.server.utils.FileUtils;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -117,7 +118,12 @@ public class ConnectToSingleControllerThread {
                                     }
                                     //遍历消息发送
                                     for (Message msg : offLineMsg) {
-                                        System.out.println(msg);
+                                        System.out.println("离线消息发送"+msg);
+                                        if(MessageType.MESSAGE_FILE.equals(msg.getMsgType())){
+                                            //如果是文件消息
+                                            byte[] bytes = FileUtils.readFile(msg.getContent());
+                                            msg.setFileBytes(bytes);
+                                        }
                                         ObjectOutputStream os = new ObjectOutputStream(ManageServerConnectClientThread.getThread(user.getUserId()).getSocket().getOutputStream());
                                         os.writeObject(msg);
                                     }

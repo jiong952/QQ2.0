@@ -17,7 +17,7 @@ public class FileUtils {
     public static byte[] readFile(String src){
         BufferedInputStream bis = null;
         try {
-            new BufferedInputStream(new FileInputStream(src));
+            bis = new BufferedInputStream(new FileInputStream(src));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

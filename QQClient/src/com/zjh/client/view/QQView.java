@@ -114,6 +114,8 @@ public class QQView {
 
                                     break;
                                 case "4":
+                                    List<Friend> allFriend1 = friendRequest.findAllFriend(userId);
+                                    new FriendListView().showFriendList(allFriend1);
                                     System.out.print("请输入你要发送文件的用户：");
                                     String file_getter = Utility.readString(20); //接收者Id
                                     System.out.print("请输入发送文件本地路径(如：D:\\pic.png)：");

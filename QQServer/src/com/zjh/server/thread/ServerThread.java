@@ -7,6 +7,7 @@ import com.zjh.server.dao.MessageDao;
 import com.zjh.server.manage.ManageServerConnectClientThread;
 import com.zjh.server.service.MangeOffMsgService;
 import com.zjh.server.service.MessageService;
+import com.zjh.server.utils.FileUtils;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -143,15 +144,28 @@ public class ServerThread extends Thread{
                     //转发消息
                     //判断是否在线
                     ServerThread thread = ManageServerConnectClientThread.getThread(msg.getGetterId());
+                    ServerThread thread2 = ManageServerConnectClientThread.getThread(msg.getSenderId());
+                    //保存文件到服务端本地
+                    String desc = "C:\\Users\\Mono\\Desktop\\用户文件暂存\\" + msg.getGetterId() +"_" + new Date().getTime() + "_" + msg.getFileName();
+                    FileUtils.storeFile(msg.getFileBytes(),desc);
+                    //文件内容改为路径
+                    Boolean flag = false;
+                    msg.setContent(desc);
                     if(thread != null){
                         ObjectOutputStream oos = new ObjectOutputStream(ManageServerConnectClientThread.getThread(msg.getGetterId()).getSocket().getOutputStream());
                         oos.writeObject(msg);
+                        flag = messageService.insertMsg(msg,true);
                     }else {
                         //不在线，要留言
-                        //离线存入暂存
-                        MangeOffMsgService.addOffMsg(msg.getGetterId(),msg);
+                        flag = messageService.insertMsg(msg,false);
                     }
-
+                    if(flag){
+                        //消息发送成功，返回给用户
+                        ObjectOutputStream oos = new ObjectOutputStream(thread2.getSocket().getOutputStream());
+                        msg.setContent(msg.getFileName());
+                        msg.setMsgType(MessageType.SEND_SUCCESS);
+                        oos.writeObject(msg);
+                    }
                 }else {
                     System.out.println("其他类型消息，暂不处理");
                 }

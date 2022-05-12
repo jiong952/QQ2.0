@@ -79,16 +79,27 @@ public class ClientConnectServerThread extends Thread{
                     System.out.println("\n========="+msg.getSenderId() +" "+msg.getGetterId()+"的群聊界面=========");
                     System.out.println("【"+msg.getSendTime()+"】"+msg.getSenderId()+"发送了：" +msg.getContent());
                 }else if(MessageType.MESSAGE_FILE.equals(msg.getMsgType())){
-                    //发送文件过来
-                    System.out.println("\n=========与"+msg.getSenderId()+"的私聊界面=========");
-                    //拿到文件信息
-                    System.out.println("【"+msg.getSendTime()+"】"+msg.getSenderId()+"对你发送了：" +msg.getFileName());
-                    //用户选择存放路径 这里无法选择路径，因为子线程会和主线程同时阻塞等待scanner，发生冲突
-                    //但后期使用图形化界面就不会同时争夺同一个资源（文件管理器）
-                    //先用封装替代
-                    String desc = "D:\\" + msg.getGetterId() +"_" + new Date().getTime() + "_" + msg.getFileName();
-                    FileUtils.storeFile(msg.getFileBytes(),desc);
-                    System.out.println(msg.getFileName()+ " 已保存到" + desc);
+                    //收到文件
+                    //查看界面是否存在
+                    ChatView view = ManageChatView.getView(msg.getGetterId());
+                    if(view != null){
+                        //窗口存在
+                        if(view.isVisible()){
+                            //可见，那就是被最小化了
+                            if(view.getExtendedState() == 1){
+                                //最小化
+                                // TODO: 2022-05-12 看看能不能做个最小化闪烁
+                            }
+                        }
+                    }else {
+                        //窗口不存在
+                        // TODO: 2022-05-12 提示音 弹窗
+                        view = new ChatView(msg.getGetterId(), msg.getSenderId());
+                        // TODO: 2022-05-12 设置为不可见
+                        System.out.println("\n========="+msg.getGetterId()+"(我)与"+msg.getSenderId()+"的私聊界面=========");
+                    }
+                    view.getFile(msg);
+
                 }else if(MessageType.MESSAGE_NEWS.equals(msg.getMsgType())){
                     //服务端推送的消息
                     System.out.println("\n=========服务端推送界面=========");

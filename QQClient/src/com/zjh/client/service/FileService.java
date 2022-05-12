@@ -40,7 +40,6 @@ public class FileService {
         Date date = new Date();
         String time = sdf.format(date);
         message.setSendTime(date);
-        System.out.println("【"+time+"】 你对" + getter + "发送了：" + fileName);
         message.setFileName(fileName);
         message.setFileBytes(fileBytes);
         //获取socket发送msg
