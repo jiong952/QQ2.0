@@ -26,11 +26,12 @@ public class MessageDao {
 //        message.setSendTime(new Date());
 //        System.out.println(new MessageDao().insertMsg(message, true));
 //        System.out.println(new MessageDao().updateMsg(7));
-//        List<Message> allMsg = new MessageDao().getAllMsg("a", "zjh");
-        List<Message> allMsg = new MessageDao().getOffLineMsg("a");
+        List<Message> allMsg = new MessageDao().getAllMsg("a", "zjh");
+//        List<Message> allMsg = new MessageDao().getOffLineMsg("a");
         for (Message message : allMsg) {
             System.out.println(message);
         }
+//        new MessageDao().clearMsg("a","zjh");
     }
 
     /**
@@ -73,7 +74,7 @@ public class MessageDao {
     }
 
     /**
-     * 私聊获取聊天记录
+     * 私聊获取聊天记录 普通消息 文件消息 群发消息
      *
      * @param myId     用户id
      * @param friendId 聊天朋友id
@@ -84,7 +85,8 @@ public class MessageDao {
         Object[] params = {myId,friendId,myId,friendId};
         String sql = "SELECT `msg_id` AS msgId,`sender_id` AS senderId, `getter_id` AS getterId,`group_id` AS groupId,\n" +
                 "`content` AS content,`send_time` AS sendTime,`type` AS msgType,`file_name` AS fileName\n" +
-                " FROM `message` WHERE (`sender_id` = ? AND `getter_id` = ?) OR(`getter_id` = ? AND `sender_id` = ?) ";
+                " FROM `message` WHERE (`sender_id` = ? AND `getter_id` = ?) OR(`getter_id` = ? AND `sender_id` = ?)  " +
+                "HAVING `type`  IN (4,8,10)";
         try {
             list = queryRunner.query(sql,new BeanListHandler<>(Message.class),params);
         } catch (SQLException e) {
@@ -112,5 +114,26 @@ public class MessageDao {
             throw  new DaoException("获取消息记录异常");
         }
         return list;
+    }
+
+    /**
+     * 清空消息记录
+     * 单删是不会删除聊天记录的，回删就删除聊天记录
+     *
+     * @param myId     用户id
+     * @param friendId 朋友id
+     * @return boolean
+     */
+    public boolean clearMsg(String myId,String friendId){
+        boolean flag = false;
+        Object[] params = {myId,friendId,myId,friendId};
+        String sql = "DELETE FROM `message` WHERE (`sender_id` = ? AND `getter_id` = ?) OR(`getter_id` = ? AND `sender_id` = ?) ";
+        try {
+            int update = queryRunner.update(sql, params);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw  new DaoException("清空消息记录异常");
+        }
+        return flag;
     }
 }

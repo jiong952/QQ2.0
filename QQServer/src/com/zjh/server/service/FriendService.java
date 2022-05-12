@@ -4,6 +4,7 @@ import com.zjh.common.Friend;
 import com.zjh.common.Message;
 import com.zjh.common.MessageType;
 import com.zjh.server.dao.FriendDao;
+import com.zjh.server.dao.MessageDao;
 import com.zjh.server.dao.UserDao;
 import com.zjh.server.manage.ManageServerConnectClientThread;
 import com.zjh.server.thread.ServerThread;
@@ -22,6 +23,7 @@ import java.util.List;
 public class FriendService {
     private UserDao userDao = new UserDao();
     private FriendDao friendDao = new FriendDao();
+    private MessageDao messageDao = new MessageDao();
 
     public static void main(String[] args) {
 //        System.out.println(new FriendService().findAllFriend("a"));
@@ -136,7 +138,7 @@ public class FriendService {
             //删除掉删除记录，彻底删除好友关系
             boolean b = friendDao.delDelFriendRecord(friendId, myId);
             //清空消息记录
-            // TODO: 2022-05-12  清空消息记录
+            messageDao.clearMsg(myId,friendId);
             boolean b1 = true;
             if(b&b1) flag = true;
         }

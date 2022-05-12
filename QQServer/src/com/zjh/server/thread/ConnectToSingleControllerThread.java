@@ -109,9 +109,6 @@ public class ConnectToSingleControllerThread {
                                 friendService.notifyOther(user.getUserId());
                                 //查看是否有离线消息，有就发送给他
                                 List<Message> offLineMsg = messageService.getOffLineMsg(user.getUserId());
-                                //把消息改为success状态
-                                messageService.updateMsg(offLineMsg);
-//                                ArrayList<Message> messageList = MangeOffMsgService.getOffMsgMap().get(user.getUserId());
                                 if(offLineMsg != null){
                                     try {
                                         Thread.sleep(100);
@@ -187,15 +184,26 @@ public class ConnectToSingleControllerThread {
                         //用户发送好友申请
                         String myId = requestMsg.getRequesterId();
                         String friendId = (String)requestMsg.getParams()[0];
-                        String time3 = sdf.format(new Date());
+                        Date date1 = new Date();
+                        String time3 = sdf.format(date1);
                         System.out.println("【"+time3+"】用户"+myId+"向"+friendId+"发送好友申请");
                         //转发好友申请消息
                         Message msg = new Message();
                         msg.setMsgType(MessageType.ASK_MAKE_FRIEND);
                         msg.setSenderId(myId);
                         msg.setGetterId(friendId);
-                        ObjectOutputStream os = new ObjectOutputStream(ManageServerConnectClientThread.getThread(friendId).getSocket().getOutputStream());
-                        os.writeObject(msg);
+                        msg.setContent("好友申请消息");
+                        msg.setSendTime(date1);
+                        //判断是否在线
+                        ServerThread thread = ManageServerConnectClientThread.getThread(friendId);
+                        if(thread != null){
+                            //在线
+                            ObjectOutputStream os = new ObjectOutputStream(ManageServerConnectClientThread.getThread(friendId).getSocket().getOutputStream());
+                            os.writeObject(msg);
+                        }else {
+                            //离线
+                            messageService.insertMsg(msg,false);
+                        }
                         break;
                     case "permitMakeFriend":
                         //用户同意好友请求
