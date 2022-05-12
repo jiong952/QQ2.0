@@ -5,8 +5,8 @@ import com.zjh.common.Message;
 import com.zjh.common.MessageType;
 import com.zjh.server.dao.FriendDao;
 import com.zjh.server.dao.UserDao;
-import com.zjh.server.service.thread.ManageServerConnectClientThread;
-import com.zjh.server.service.thread.ServerThread;
+import com.zjh.server.manage.ManageServerConnectClientThread;
+import com.zjh.server.thread.ServerThread;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;

@@ -1,16 +1,18 @@
 package com.zjh.client.view;
 
-import com.zjh.client.service.FriendService;
+import com.zjh.client.request.FriendRequest;
 import com.zjh.common.Friend;
 import com.zjh.utils.Utility;
+
+import javax.swing.*;
 
 /**
  * @author 张俊鸿
  * @description: 修改对好友信息的页面
  * @since 2022-05-12 1:22
  */
-public class UpdateFriendView {
-    private FriendService friendService = new FriendService();
+public class UpdateFriendView extends JFrame {
+    private FriendRequest friendRequest = new FriendRequest();
     private String userId;
 
     public UpdateFriendView(String userId) {
@@ -27,7 +29,7 @@ public class UpdateFriendView {
         int i = Utility.readInt(1);
         Boolean star = false;
         if(i == 1) star = true;
-        boolean b = friendService.updateFriend(userId, friend.getFriendId(), remark, star);
+        boolean b = friendRequest.updateFriend(userId, friend.getFriendId(), remark, star);
         if(b){
             System.out.println("更新成功");
         }else {

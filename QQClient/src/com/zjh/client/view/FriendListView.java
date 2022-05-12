@@ -2,6 +2,7 @@ package com.zjh.client.view;
 
 import com.zjh.common.Friend;
 
+import javax.swing.*;
 import java.util.List;
 
 /**
@@ -9,7 +10,7 @@ import java.util.List;
  * @description: 好友列表页面
  * @since 2022-05-11 16:18
  */
-public class FriendListView {
+public class FriendListView extends JFrame {
     public void showFriendList(List<Friend> allFriend){
         // TODO: 2022-05-11 后期上方会有表格类，调用方法刷新表格数据
         System.out.println("\n=========好友列表=========");

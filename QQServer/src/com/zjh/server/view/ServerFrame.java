@@ -1,6 +1,6 @@
 package com.zjh.server.view;
 
-import com.zjh.server.service.thread.ConnectToSingleThread;
+import com.zjh.server.thread.ConnectToSingleControllerThread;
 
 /**
  * 服务器启动类
@@ -10,6 +10,6 @@ import com.zjh.server.service.thread.ConnectToSingleThread;
  */
 public class ServerFrame {
     public static void main(String[] args) {
-        new ConnectToSingleThread();
+        new ConnectToSingleControllerThread();
     }
 }

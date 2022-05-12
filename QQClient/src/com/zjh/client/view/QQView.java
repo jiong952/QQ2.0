@@ -1,9 +1,10 @@
 package com.zjh.client.view;
 
-import com.zjh.client.service.FileClientService;
-import com.zjh.client.service.FriendService;
-import com.zjh.client.service.MessageClientService;
-import com.zjh.client.service.UserService;
+import com.zjh.client.manage.ManageChatView;
+import com.zjh.client.service.FileService;
+import com.zjh.client.request.FriendRequest;
+import com.zjh.client.service.MessageService;
+import com.zjh.client.request.UserRequest;
 import com.zjh.common.Friend;
 import com.zjh.common.StateCode;
 import com.zjh.utils.Utility;
@@ -19,10 +20,10 @@ import java.util.List;
  */
 @SuppressWarnings("all")
 public class QQView {
-    private UserService userService = new UserService();
-    private MessageClientService messageClientService = new MessageClientService();
-    private FileClientService fileClientService = new FileClientService();
-    private FriendService friendService = new FriendService();
+    private UserRequest userRequest = new UserRequest();
+    private MessageService messageService = new MessageService();
+    private FileService fileService = new FileService();
+    private FriendRequest friendRequest = new FriendRequest();
     public static void main(String[] args) {
         new QQView().showMenu();
         System.out.println("客户端退出.......");
@@ -50,7 +51,7 @@ public class QQView {
                     System.out.print("请输入密 码：");
                     String password = Utility.readString(20);
                     //登录验证
-                    String stateCode = userService.checkUser(userId, password);
+                    String stateCode = userRequest.checkUser(userId, password);
                     if(StateCode.SUCCEED.equals(stateCode)){
                         System.out.println("======欢迎用户("+userId+")======");
                         while (loop){
@@ -72,7 +73,7 @@ public class QQView {
                             switch (command){
                                 case "1":
 //                                    System.out.println("显示在线用户列表");
-                                    userService.onLineFriendList();
+                                    userRequest.onLineFriendList();
                                     //主线程休眠一会，使得用户列表信息先显示
                                     try {
                                         Thread.sleep(100);
@@ -83,16 +84,33 @@ public class QQView {
                                 case "2":
                                     System.out.print("请输入你要群发的内容：");
                                     String toALLContent = Utility.readString(100); //聊天内容
-                                    messageClientService.sendMsgToAll(toALLContent,userId);
+                                    messageService.sendMsgToAll(toALLContent,userId);
                                     break;
                                 case "3":
-                                    List<Friend> allFriend0 = friendService.findAllFriend(userId);
+                                    List<Friend> allFriend0 = friendRequest.findAllFriend(userId);
                                     new FriendListView().showFriendList(allFriend0);
                                     System.out.print("请输入你要聊天的用户：");
                                     //这里目前只能在线用户通讯，后期使用数据库将消息存入数据库后就可以实现离线留言功能
                                     String getterId = Utility.readString(20); //接收者Id
                                     // TODO: 2022-05-12 之后在页面，设置一个按钮，一点击，携带所有参数进入ChatView页面
-                                    new ChatView(userId,getterId).chat();
+                                    //先判断是否有这个页面，有直接打开，没有就new一个
+                                    ChatView view = ManageChatView.getView(getterId);
+                                    if(view != null){
+                                        //窗口存在
+                                        if(view.isVisible()){
+                                            //可见，那就是被最小化了
+                                            if(view.getExtendedState() == 1){
+                                                //最小化
+                                                view.toFront();//让他弹出到最顶
+                                            }
+                                        }else {
+                                            //不可见，那就是有消息来，但是用户没打开页面
+                                            view.setVisible(true);
+                                        }
+                                    }else {
+                                        //窗口不存在
+                                        new ChatView(userId,getterId).chat();
+                                    }
 
                                     break;
                                 case "4":
@@ -100,7 +118,7 @@ public class QQView {
                                     String file_getter = Utility.readString(20); //接收者Id
                                     System.out.print("请输入发送文件本地路径(如：D:\\pic.png)：");
                                     String src = Utility.readString(50);
-                                    fileClientService.sendFile(src,userId,file_getter);
+                                    fileService.sendFile(src,userId,file_getter);
                                     break;
                                 case "5":
                                     StringBuilder getters = new StringBuilder();
@@ -115,10 +133,10 @@ public class QQView {
                                     System.out.print("请输入发送的内容：");
                                     String groupChatContent = Utility.readString(100); //聊天内容
                                     //这里目前只能在线用户通讯，后期使用数据库将消息存入数据库后就可以实现离线留言功能
-                                    messageClientService.groupChat(groupChatContent,userId,getters.toString());
+                                    messageService.groupChat(groupChatContent,userId,getters.toString());
                                     break;
                                 case "6":
-                                    List<Friend> allFriend = friendService.findAllFriend(userId);
+                                    List<Friend> allFriend = friendRequest.findAllFriend(userId);
                                     new FriendListView().showFriendList(allFriend);
                                     break;
                                 case "8":
@@ -126,7 +144,7 @@ public class QQView {
                                     // TODO: 2022-05-12 之后就在用户界面用button事件删除，可以加个确定框
                                     System.out.print("请输入你要删除的好友：");
                                     String del_friend = Utility.readString(20);
-                                    boolean b = friendService.deleteFriend(userId, del_friend);
+                                    boolean b = friendRequest.deleteFriend(userId, del_friend);
                                     if(b){
                                         System.out.println("删除好友"+del_friend+"成功");
                                     }else {
@@ -134,7 +152,7 @@ public class QQView {
                                     }
                                     break;
                                 case "9":
-                                    List<Friend> allFriend2 = friendService.findAllFriend(userId);
+                                    List<Friend> allFriend2 = friendRequest.findAllFriend(userId);
                                     new FriendListView().showFriendList(allFriend2);
                                     // TODO: 2022-05-12 之后在页面，设置一个按钮，一点击，携带所有参数进入UpdateFriendView页面
                                     System.out.print("请输入你要修改好友的信息：");
@@ -154,7 +172,7 @@ public class QQView {
                                 case "0":
                                     System.out.println("退出系统成功！");
                                     //调用userClientService的退出方法
-                                    userService.exit();
+                                    userRequest.exit();
                                     loop = false;
                                     break;
                             }

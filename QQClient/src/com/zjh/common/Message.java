@@ -1,6 +1,9 @@
 package com.zjh.common;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
 
 /**
  * 消息类
@@ -10,20 +13,40 @@ import java.io.Serializable;
 public class Message implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    private int msgId;
     private String senderId;
     private String getterId;
+    private String groupId;
     private String content;
-    private String sendTime;
+    private Date sendTime;
     private String msgType;
-    private FileMsg fileMsg;
+    private byte[] fileBytes;
+    private String fileName;
 
-    public FileMsg getFileMsg() {
-        return fileMsg;
+    public int getMsgId() {
+        return msgId;
     }
 
-    public void setFileMsg(FileMsg fileMsg) {
-        this.fileMsg = fileMsg;
+    public void setMsgId(int msgId) {
+        this.msgId = msgId;
     }
+
+    public byte[] getFileBytes() {
+        return fileBytes;
+    }
+
+    public void setFileBytes(byte[] fileBytes) {
+        this.fileBytes = fileBytes;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
@@ -54,10 +77,13 @@ public class Message implements Serializable {
     }
 
     public String getSendTime() {
-        return sendTime;
+        //格式化输入一下，方便打印
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time = sdf.format(this.sendTime);
+        return time;
     }
 
-    public void setSendTime(String sendTime) {
+    public void setSendTime(Date sendTime) {
         this.sendTime = sendTime;
     }
 
@@ -69,26 +95,42 @@ public class Message implements Serializable {
         this.msgType = msgType;
     }
 
-    public Message(String senderId, String getterId, String content, String sendTime, String msgType) {
+    @Override
+    public String toString() {
+        return "Message{" +
+                "msgId=" + msgId +
+                ", senderId='" + senderId + '\'' +
+                ", getterId='" + getterId + '\'' +
+                ", groupId='" + groupId + '\'' +
+                ", content='" + content + '\'' +
+                ", sendTime=" + sendTime +
+                ", msgType='" + msgType + '\'' +
+                ", fileBytes=" + Arrays.toString(fileBytes) +
+                ", fileName='" + fileName + '\'' +
+                '}';
+    }
+
+    public Message(int msgId, String senderId, String getterId, String groupId, String content, Date sendTime, String msgType, byte[] fileBytes, String fileName) {
+        this.msgId = msgId;
         this.senderId = senderId;
         this.getterId = getterId;
+        this.groupId = groupId;
         this.content = content;
         this.sendTime = sendTime;
         this.msgType = msgType;
+        this.fileBytes = fileBytes;
+        this.fileName = fileName;
     }
 
     public Message() {
     }
 
-    @Override
-    public String toString() {
-        return "Message{" +
-                "sender='" + senderId + '\'' +
-                ", getter='" + getterId + '\'' +
-                ", content='" + content + '\'' +
-                ", sendTime='" + sendTime + '\'' +
-                ", msgType='" + msgType + '\'' +
-                ", fileMsg=" + fileMsg +
-                '}';
+    public String getGroupId() {
+        return groupId;
     }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
 }
