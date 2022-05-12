@@ -62,17 +62,16 @@ public class FriendService {
      *
      * @param userId 用户id
      */
-    public void notifyOther(String userId){
+    public void notifyOther(String userId,String msgType){
         //给在线的好友发通知就行
         List<Friend> allFriend = findAllFriend(userId);
         for (Friend friend : allFriend) {
             if(friend.isOnLine()){
                 //在线
                 Message message = new Message();
-                message.setMsgType(MessageType.NEW_ONLINE);
+                message.setMsgType(msgType);
                 message.setSenderId(userId);
                 message.setGetterId(friend.getFriendId());
-
                 //从在线池中拿出好友线程
                 ServerThread thread = ManageServerConnectClientThread.getThread(friend.getFriendId());
                 try {

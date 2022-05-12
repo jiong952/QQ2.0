@@ -58,14 +58,14 @@ public class QQView {
                             System.out.println("\n======多用户通信系统二级菜单======");
                             System.out.println("\t\t 1 显示所有在线用户列表");
                             System.out.println("\t\t 2 群发消息给所有好友");
-                            System.out.println("\t\t 3 私发消息");
-                            System.out.println("\t\t 4 发送文件");
+                            System.out.println("\t\t 3 私发消息(√)");
+                            System.out.println("\t\t 4 发送文件(√)");
                             System.out.println("\t\t 5 群聊功能");
-                            System.out.println("\t\t 6 显示好友列表");
+                            System.out.println("\t\t 6 显示好友列表(√)");
                             System.out.println("\t\t 7 添加好友|不用");
-                            System.out.println("\t\t 8 删除好友");
-                            System.out.println("\t\t 9 修改好友");
-                            System.out.println("\t\t a 添加好友 | 搜索用户");
+                            System.out.println("\t\t 8 删除好友(√)");
+                            System.out.println("\t\t 9 修改好友(√)");
+                            System.out.println("\t\t a 添加好友 | 搜索用户(√)");
                             System.out.println("\t\t 0 退出系统");
                             System.out.println("请输入你的选择:");
                             //输入一位指令,根据指令执行不同逻辑

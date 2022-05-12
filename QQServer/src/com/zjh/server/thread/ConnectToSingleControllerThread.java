@@ -93,8 +93,6 @@ public class ConnectToSingleControllerThread {
                             if(ManageServerConnectClientThread.getThread(user.getUserId()) == null){
 
                                 String time = sdf.format(new Date());
-                                System.out.println("【"+time+"】"+user.getUserId()+ "登录成功" );
-                                System.out.println("当前在线人数："+ManageServerConnectClientThread.onLineNum() + "人");
                                 //响应成功
                                 ResponseMsg responseMsg = new ResponseMsg();
                                 responseMsg.setStateCode(StateCode.SUCCEED);
@@ -107,7 +105,7 @@ public class ConnectToSingleControllerThread {
                                 ManageServerConnectClientThread.addThread(user.getUserId(), serverThread);
                                 //增加一个notifyFriend方法，通知其他好友上线状态【发一个msg到监听线程，getterId是其他用户，senderId是上线用户】
                                 //client收到消息后，在调用方法，更新好友列表字段
-                                friendService.notifyOther(user.getUserId());
+                                friendService.notifyOther(user.getUserId(),MessageType.NEW_ONLINE);
                                 //查看是否有离线消息，有就发送给他
                                 List<Message> offLineMsg = messageService.getOffLineMsg(user.getUserId());
                                 if(offLineMsg != null){
@@ -128,6 +126,8 @@ public class ConnectToSingleControllerThread {
                                         os.writeObject(msg);
                                     }
                                 }
+                                System.out.println("【"+time+"】"+user.getUserId()+ "登录成功" );
+                                System.out.println("当前在线人数："+ManageServerConnectClientThread.onLineNum() + "人");
                             }else {
                                 sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                                 String time = sdf.format(new Date());

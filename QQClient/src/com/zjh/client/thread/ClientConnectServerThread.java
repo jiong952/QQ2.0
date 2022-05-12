@@ -104,9 +104,12 @@ public class ClientConnectServerThread extends Thread{
                     //服务端推送的消息
                     System.out.println("\n=========服务端推送界面=========");
                     System.out.println("【"+msg.getSendTime()+"】"+msg.getSenderId()+"对你发送了：" +msg.getContent());
-                }else if(MessageType.NEW_ONLINE.equals(msg.getMsgType())){
-                    //新好友上线
-                    new NotificationView().onLineRemind(msg.getSenderId());
+                }else if(MessageType.NEW_ONLINE.equals(msg.getMsgType()) || MessageType.NEW_OFFLINE.equals(msg.getMsgType())){
+                   //新好友上线或下线
+                    if(MessageType.NEW_ONLINE.equals(msg.getMsgType())){
+                        //新好友上线
+                        new NotificationView().onLineRemind(msg.getSenderId());
+                    }
                     //刷新好友列表
                     List<Friend> allFriend = new FriendRequest().findAllFriend(msg.getGetterId());
                     new FriendListView().showFriendList(allFriend);

@@ -105,10 +105,12 @@ public class UserRequest {
         try {
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(message);
-            System.exit(0);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        ClientConnectServerThread thread = ManageClientConnectServerThread.getThread(u.getUserId());
+        thread.stop();
+        System.exit(0);
     }
 
     /**

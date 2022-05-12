@@ -24,7 +24,7 @@ public class ManageServerConnectClientThread {
      * @return int
      */
     public static int onLineNum(){
-        return map.size()+1;
+        return map.size();
     }
 
     /**

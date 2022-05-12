@@ -5,6 +5,7 @@ import com.zjh.common.MessageType;
 import com.zjh.server.dao.FriendDao;
 import com.zjh.server.dao.MessageDao;
 import com.zjh.server.manage.ManageServerConnectClientThread;
+import com.zjh.server.service.FriendService;
 import com.zjh.server.service.MangeOffMsgService;
 import com.zjh.server.service.MessageService;
 import com.zjh.server.utils.FileUtils;
@@ -25,6 +26,7 @@ import java.util.List;
  **/
 public class ServerThread extends Thread{
     private MessageService messageService = new MessageService();
+    private FriendService friendService = new FriendService();
     //和客户端通讯的socket
     private Socket socket;
     private String userId;
@@ -63,10 +65,13 @@ public class ServerThread extends Thread{
                     oos.writeObject(msg_back);
                 }else if(MessageType.MESSAGE_CLIENT_EXIT.equals(msg.getMsgType())){
                     //客户端安全退出
-                    String time = sdf.format(new Date());
-                    System.out.println("【"+time+"】用户"+msg.getSenderId() + "退出");
+                    //通知好友下线了
+                    friendService.notifyOther(msg.getSenderId(),MessageType.NEW_OFFLINE);
                     //在集合中去除客户端
                     ManageServerConnectClientThread.removeThread(msg.getSenderId());
+                    String time = sdf.format(new Date());
+                    System.out.println("【"+time+"】用户"+msg.getSenderId() + "退出");
+                    System.out.println("当前在线人数："+ManageServerConnectClientThread.onLineNum() + "人");
                     socket.close();
                     break;
                 }else if(MessageType.MESSAGE_COMMON_MSG.equals(msg.getMsgType())){

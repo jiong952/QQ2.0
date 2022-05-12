@@ -64,17 +64,4 @@ public class MessageService {
         updateMsg(list);
         return list;
     }
-    /**
-     * 清空消息记录
-     * 单删是不会删除聊天记录的，回删就删除聊天记录
-     *
-     * @param myId     用户id
-     * @param friendId 朋友id
-     * @return boolean
-     */
-    public boolean clearMsg(String myId,String friendId){
-        boolean flag = false;
-        flag = messageDao.clearMsg(myId,friendId);
-        return flag;
-    }
 }
