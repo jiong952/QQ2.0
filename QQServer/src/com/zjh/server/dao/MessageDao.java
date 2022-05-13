@@ -75,6 +75,7 @@ public class MessageDao {
 
     /**
      * 私聊获取聊天记录 普通消息 文件消息 群发消息
+     * 过滤掉被用户删除的聊天记录
      *
      * @param myId     用户id
      * @param friendId 聊天朋友id
@@ -85,7 +86,7 @@ public class MessageDao {
         Object[] params = {myId,friendId,myId,friendId};
         String sql = "SELECT `msg_id` AS msgId,`sender_id` AS senderId, `getter_id` AS getterId,`group_id` AS groupId,\n" +
                 "`content` AS content,`send_time` AS sendTime,`type` AS msgType,`file_name` AS fileName\n" +
-                " FROM `message` WHERE (`sender_id` = ? AND `getter_id` = ?) OR(`getter_id` = ? AND `sender_id` = ?)  " +
+                " FROM `message` WHERE (`sender_id` = ? AND `getter_id` = ? AND `sender_del` = 0) OR(`getter_id` = ? AND `sender_id` = ? AND `getter_del` = 0)  " +
                 "HAVING `type`  IN (4,8,10)";
         try {
             list = queryRunner.query(sql,new BeanListHandler<>(Message.class),params);
@@ -130,9 +131,37 @@ public class MessageDao {
         String sql = "DELETE FROM `message` WHERE (`sender_id` = ? AND `getter_id` = ?) OR(`getter_id` = ? AND `sender_id` = ?) ";
         try {
             int update = queryRunner.update(sql, params);
+            if(update > 0){
+                flag = true;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             throw  new DaoException("清空消息记录异常");
+        }
+        return flag;
+    }
+
+    /**
+     * 单删，用户不可见聊天记录，更新状态
+     * 就算再加回来，之前的聊天记录也没了
+     *
+     * @param myId     我身份证
+     * @param friendId 朋友id
+     * @return boolean
+     */
+    public boolean updateDel(String myId,String friendId){
+        boolean flag = false;
+        Object[] params = {myId,friendId};
+        String sql1 = "UPDATE `message` SET `sender_del` = 1 WHERE `sender_id` = ? AND `getter_id` = ?;";
+        String sql2 = "UPDATE `message` SET `getter_del` = 1 WHERE `getter_id` = ? AND `sender_id` = ?";
+        try {
+            int update1 = queryRunner.update(sql1, params);
+            int update2 = queryRunner.update(sql2, params);
+            if(update1 > 0 && update2 > 0){
+                flag = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return flag;
     }

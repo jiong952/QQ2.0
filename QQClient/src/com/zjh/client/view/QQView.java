@@ -67,6 +67,8 @@ public class QQView {
                             System.out.println("\t\t 8 删除好友(√)");
                             System.out.println("\t\t 9 修改好友(√)");
                             System.out.println("\t\t a 添加好友 | 搜索用户(√)");
+                            System.out.println("\t\t b 备份聊天记录到本地(全部)(√)");
+                            System.out.println("\t\t c 删除聊天记录(√)");
                             System.out.println("\t\t 0 退出系统(√)");
                             System.out.println("请输入你的选择:");
                             //输入一位指令,根据指令执行不同逻辑
@@ -195,6 +197,24 @@ public class QQView {
                                     break;
                                 case "a":
                                     new SearchUserView(userId).searchUserById();
+                                    break;
+                                case "b":
+                                    List<Friend> allFriendb = friendRequest.findAllFriend(userId);
+                                    new FriendListView().showFriendList(allFriendb);
+                                    System.out.print("请输入你要备份与谁的聊天记录：");
+                                    String chat_his_friend = Utility.readString(20);
+                                    // 调用方法备份聊天记录到本地
+                                    messageService.backUpChatHis(userId,chat_his_friend);
+                                    break;
+                                case "c":
+                                    List<Friend> allFriendc = friendRequest.findAllFriend(userId);
+                                    new FriendListView().showFriendList(allFriendc);
+                                    System.out.print("请输入你要删除与谁的聊天记录：");
+                                    String chat_del_his = Utility.readString(20);
+                                    boolean b1 = messageService.delChatHis(userId, chat_del_his);
+                                    if(b1){
+                                        System.out.println("删除成功！");
+                                    }
                                     break;
                                 case "0":
                                     System.out.println("退出系统成功！");

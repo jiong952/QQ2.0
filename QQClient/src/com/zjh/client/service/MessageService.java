@@ -2,10 +2,9 @@ package com.zjh.client.service;
 
 import com.zjh.client.manage.ManageClientConnectServerThread;
 import com.zjh.common.*;
+import com.zjh.utils.FileUtils;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
@@ -130,6 +129,113 @@ public class MessageService {
             e.printStackTrace();
         }
         return list;
+    }
+
+    /**
+     * 备份与朋友的聊天记录到本地用户文件夹
+     *
+     * @param myId     我身份证
+     * @param friendId 朋友id
+     * @return boolean
+     */
+    public boolean backUpChatHis(String myId,String friendId){
+        boolean flag = false;
+        //保存文件到服务端本地
+//        String desc = "C:\\Users\\Mono\\Desktop\\用户文件暂存\\" + msg.getGetterId() +"_" + new Date().getTime() + "_" + msg.getFileName();
+//        FileUtils.storeFile(msg.getFileBytes(),desc);
+        //获得聊天记录
+        List<Message> allMsg = getAllMsg(myId, friendId);
+        //查看文件夹是否存在，不存在就创建D:\用户聊天记录备份\a\zjh\时间戳
+        String fileDirPath = "D:\\用户聊天记录备份\\"+myId+"\\"+ friendId +"\\"+  new Date().getTime();
+        File dir = new File(fileDirPath);
+        if(!dir.exists()){
+            //文件夹不存在
+            if(dir.mkdirs()){
+                //创建文件夹成功
+                //开始保存文件
+                //文本文件，追加模式写入txt
+                String txtPath = fileDirPath + "\\"+friendId+"_"+new Date().getTime()+".txt";
+                //其他单独保存
+                File txtFile = new File(txtPath);
+                boolean newFile = false;
+                if(!txtFile.exists()){
+                    //如果文件不存在就创建一个
+                    try {
+                        newFile = txtFile.createNewFile();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                BufferedWriter bw = null;
+                if(newFile){
+                    //开始遍历保存
+                    for (Message message : allMsg) {
+                        if(MessageType.MESSAGE_FILE.equals(message.getMsgType())){
+                            //文件
+                            String filePath = fileDirPath + "\\" +new Date().getTime()+"_"+message.getFileName();
+                            FileUtils.storeFile(message.getFileBytes(),filePath);
+                        }else {
+                            try {
+                                bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(txtPath, true)));
+                                try {
+                                    bw.write("【"+message.getSendTime()+"】"+(message.getSenderId().equals(myId) ? "我":message.getSenderId())+"发送了"+message.getContent());
+                                    bw.newLine();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                            }finally {
+                                try {
+                                    bw.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                    System.out.println("聊天记录已备份在"+fileDirPath);
+                }
+            }
+        }
+        return flag;
+    }
+
+    /**
+     * 删除聊天记录
+     *
+     * @param myId     用户id
+     * @param friendId 朋友id
+     * @return boolean
+     */
+    public boolean delChatHis(String myId,String friendId){
+        boolean flag = false;
+        //删除本地聊天记录文件夹 D:\用户聊天记录备份\a\zjh
+        String fileDirPath = "D:\\用户聊天记录备份\\"+myId+"\\"+friendId;
+        File dir = new File(fileDirPath);
+        if(dir.exists()){
+            //删除本地文件
+            FileUtils.deleteAll(dir);
+        }
+        //请求 修改数据库的对应表的聊天记录状态
+        try {
+            socket = new Socket(InetAddress.getByName(StaticString.server_ip), StaticString.server_port);
+            //发送序列化用户对象
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            RequestMsg requestMsg = new RequestMsg();
+            //方法名和参数
+            requestMsg.setRequesterId(myId);
+            requestMsg.setContent("updateDel");
+            requestMsg.setParams(new Object[]{friendId});
+            oos.writeObject(requestMsg);
+            //接收服务端响应的消息
+            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            ResponseMsg responseMsg = (ResponseMsg) ois.readObject();
+            flag = (boolean) responseMsg.getReturnValue();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return flag;
     }
 
 }

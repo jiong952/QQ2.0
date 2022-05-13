@@ -132,14 +132,15 @@ public class FriendService {
             boolean b1 = friendDao.deleteFriendRecord(friendId, myId);
             //插入一条删除记录
             boolean c = friendDao.insertDelFriendRecord(myId, friendId);
+            //把消息表中对应消息的字段改为1
+            messageDao.updateDel(myId, friendId);
             if(b&&b1&&c) flag = true;
         }else {
             //删除掉删除记录，彻底删除好友关系
             boolean b = friendDao.delDelFriendRecord(friendId, myId);
             //清空消息记录
-            messageDao.clearMsg(myId,friendId);
-            boolean b1 = true;
-            if(b&b1) flag = true;
+            messageDao.clearMsg(myId, friendId);
+            if(b) flag = true;
         }
         return flag;
     }

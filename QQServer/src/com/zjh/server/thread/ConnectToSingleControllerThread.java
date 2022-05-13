@@ -117,11 +117,6 @@ public class ConnectToSingleControllerThread {
                                     //遍历消息发送
                                     for (Message msg : offLineMsg) {
                                         System.out.println("离线消息发送"+msg);
-                                        if(MessageType.MESSAGE_FILE.equals(msg.getMsgType())){
-                                            //如果是文件消息
-                                            byte[] bytes = FileUtils.readFile(msg.getContent());
-                                            msg.setFileBytes(bytes);
-                                        }
                                         ObjectOutputStream os = new ObjectOutputStream(ManageServerConnectClientThread.getThread(user.getUserId()).getSocket().getOutputStream());
                                         os.writeObject(msg);
                                     }
@@ -274,6 +269,19 @@ public class ConnectToSingleControllerThread {
                         ResponseMsg responseMsg7 = new ResponseMsg();
                         responseMsg7.setReturnValue(allMsg);
                         oos.writeObject(responseMsg7);
+                        break;
+                    case "updateDel":
+                        //查找聊天记录
+                        String myId8 = requestMsg.getRequesterId();
+                        String friendId8 = (String)requestMsg.getParams()[0];
+                        String time8 = sdf.format(new Date());
+                        System.out.println("【"+time8+"】用户"+myId8+"删除和"+friendId8+"的聊天记录");
+                        //调用方法
+                        boolean b3 = messageService.updateDel(myId8, friendId8);
+                        //响应
+                        ResponseMsg responseMsg8 = new ResponseMsg();
+                        responseMsg8.setReturnValue(b3);
+                        oos.writeObject(responseMsg8);
                         break;
                     default:
                         //响应

@@ -63,4 +63,24 @@ public class FileUtils {
             e.printStackTrace();
         }
     }
+
+    /**
+     * 递归删除文件夹所有文件
+     *
+     * @param file 文件
+     */
+    public static void deleteAll(File file){
+        if (file.exists()) {
+            File files[] = file.listFiles();
+            int len = files.length;
+            for (int i = 0; i < len; i++) {
+                if (files[i].isDirectory()) {
+                    deleteAll(files[i]);
+                } else {
+                    files[i].delete();
+                }
+            }
+            file.delete();
+        }
+    }
 }
