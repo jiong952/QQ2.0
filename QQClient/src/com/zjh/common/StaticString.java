@@ -7,7 +7,7 @@ package com.zjh.common;
  */
 public interface StaticString {
     /**服务器ip地址**/
-    String server_ip = "10.33.223.237";
+    String server_ip = "127.0.0.1";
     /**服务器端口**/
     int server_port = 9998;
 

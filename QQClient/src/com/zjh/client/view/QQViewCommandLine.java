@@ -20,13 +20,13 @@ import java.util.List;
  * @date 2022/05/08
  */
 @SuppressWarnings("all")
-public class QQView {
+public class QQViewCommandLine {
     private UserRequest userRequest = new UserRequest();
     private MessageService messageService = new MessageService();
     private FileService fileService = new FileService();
     private FriendRequest friendRequest = new FriendRequest();
     public static void main(String[] args) {
-        new QQView().showMenu();
+        new QQViewCommandLine().showMenu();
         System.out.println("客户端退出.......");
     }
 
