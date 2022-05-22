@@ -51,10 +51,10 @@ public class ChatView extends JFrame {
             }
         }
         //设置窗口大小和位置
-        frame = new JFrame("与"+friendId+"聊天中......");
+        frame = new JFrame("与 "+friend.getFriendName()+" ("+friend.getRemark()+") 聊天中......");
         Toolkit t=Toolkit.getDefaultToolkit();
         Dimension d=t.getScreenSize();
-        frame.setBounds((d.width-d.width/3)/2,(d.height-d.height/3)/2,400,600);
+        frame.setBounds((d.width-d.width/3)/2,(d.height-d.height/3)/2,650,600);
         frame.setIconImage((new ImageIcon("img/icon.jpg").getImage()));
         //隐藏聊天框
         frame.addWindowListener(new WindowAdapter() {
