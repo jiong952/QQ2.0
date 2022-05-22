@@ -14,15 +14,18 @@ public class FriendNode extends DefaultMutableTreeNode {
     private Friend friend;
 
     public FriendNode(Friend friend) {
-        //文本框放昵称和个性签名
-        super(friend.getFriendName() + friend.getSignature());
+        //文本框放昵称
+        super(friend.getFriendName());
         this.friend = friend;
     }
     public ImageIcon getImageIcon() {
+        ImageIcon imageIcon = new ImageIcon(friend.getAvatar());
+        //设置缩放图片
+//        imageIcon = new ImageIcon(imageIcon.getImage().getScaledInstance(cs.getWidth(),-1,Image.SCALE_DEFAULT));
         if(friend.isOnLine()){
-            return new ImageIcon(friend.getAvatar());
+            return imageIcon;
         }else {
-            return getGrayImage(new ImageIcon(friend.getAvatar()));
+            return getGrayImage(imageIcon);
         }
     }
     //图片灰度化处理

@@ -90,8 +90,8 @@ public class QQViewCommandLine {
                                     messageService.sendMsgToAll(toALLContent,userId);
                                     break;
                                 case "3":
-                                    List<Friend> allFriend0 = friendRequest.findAllFriend(userId);
-                                    new MyQQView(userId).showFriendList(allFriend0);
+//                                    List<Friend> allFriend0 = friendRequest.findAllFriend(userId);
+//                                    new MyQQView(userId).refreshFriendList(allFriend0);
                                     System.out.print("请输入你要聊天的用户：");
                                     //这里目前只能在线用户通讯，后期使用数据库将消息存入数据库后就可以实现离线留言功能
                                     String getterId = Utility.readString(20); //接收者Id
@@ -117,8 +117,8 @@ public class QQViewCommandLine {
 
                                     break;
                                 case "4":
-                                    List<Friend> allFriend1 = friendRequest.findAllFriend(userId);
-                                    new MyQQView(userId).showFriendList(allFriend1);
+//                                    List<Friend> allFriend1 = friendRequest.findAllFriend(userId);
+//                                    new MyQQView(userId).refreshFriendList(allFriend1);
                                     System.out.print("请输入你要发送文件的用户：");
                                     String file_getter = Utility.readString(20); //接收者Id
                                     System.out.print("请输入发送文件本地路径(如：D:\\pic.png)：");
@@ -142,11 +142,11 @@ public class QQViewCommandLine {
                                     break;
                                 case "6":
                                     List<Friend> allFriend = friendRequest.findAllFriend(userId);
-                                    new MyQQView(userId).showFriendList(allFriend);
+//                                    new MyQQView(userId).refreshFriendList(allFriend);
                                     break;
                                 case "7":
                                     List<Friend> allFriend22 = friendRequest.findAllFriend(userId);
-                                    new MyQQView(userId).showFriendList(allFriend22);
+//                                    new MyQQView(userId).refreshFriendList(allFriend22);
                                     System.out.print("请输入好友：");
                                     String msgHisFri = Utility.readString(20);
                                     ChatHistoryView view2 = ManageChatHistoryView.getView(msgHisFri);
@@ -182,7 +182,7 @@ public class QQViewCommandLine {
                                     break;
                                 case "9":
                                     List<Friend> allFriend2 = friendRequest.findAllFriend(userId);
-                                    new MyQQView(userId).showFriendList(allFriend2);
+//                                    new MyQQView(userId).refreshFriendList(allFriend2);
                                     // TODO: 2022-05-12 之后在页面，设置一个按钮，一点击，携带所有参数进入UpdateFriendView页面
                                     System.out.print("请输入你要修改好友的信息：");
                                     String update_friend = Utility.readString(20);
@@ -200,7 +200,7 @@ public class QQViewCommandLine {
                                     break;
                                 case "b":
                                     List<Friend> allFriendb = friendRequest.findAllFriend(userId);
-                                    new MyQQView(userId).showFriendList(allFriendb);
+//                                    new MyQQView(userId).refreshFriendList(allFriendb);
                                     System.out.print("请输入你要备份与谁的聊天记录：");
                                     String chat_his_friend = Utility.readString(20);
                                     // 调用方法备份聊天记录到本地
@@ -208,7 +208,7 @@ public class QQViewCommandLine {
                                     break;
                                 case "c":
                                     List<Friend> allFriendc = friendRequest.findAllFriend(userId);
-                                    new MyQQView(userId).showFriendList(allFriendc);
+//                                    new MyQQView(userId).refreshFriendList(allFriendc);
                                     System.out.print("请输入你要删除与谁的聊天记录：");
                                     String chat_del_his = Utility.readString(20);
                                     boolean b1 = messageService.delChatHis(userId, chat_del_his);

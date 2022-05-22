@@ -108,9 +108,19 @@ public class ClientConnectServerThread extends Thread{
                         //新好友上线
                         new NotificationView().onLineRemind(msg.getSenderId());
                     }
-                    //刷新好友列表
+                    // 把指定好友的头像改为正常亮色
+                    // TODO: 2022-05-22 把原来的删掉 把在线的插入到最前面
+
                     List<Friend> allFriend = new FriendRequest().findAllFriend(msg.getGetterId());
-                    new MyQQView(msg.getGetterId()).showFriendList(allFriend);
+                    MyQQView.refreshFriendList(allFriend);
+//                    for (Friend friend : allFriend) {
+//                        if(friend.getFriendId().equals(msg.getSenderId())){
+//                            MyQQView.refreshFriendList(friend);
+//                            break;
+//                        }
+//                    }
+//
+//                    MyQQView.refreshFriendList(allFriend);
                 }else if(MessageType.ASK_MAKE_FRIEND.equals(msg.getMsgType())){
                     //好友申请
                     new FriendsVerifyView().addVerifyRecord(msg.getSenderId(),msg.getGetterId());
@@ -119,13 +129,25 @@ public class ClientConnectServerThread extends Thread{
                     new NotificationView().askMakeFriendSuccess(msg.getSenderId());
                     //刷新好友列表
                     List<Friend> allFriend = new FriendRequest().findAllFriend(msg.getGetterId());
-                    new MyQQView(msg.getGetterId()).showFriendList(allFriend);
+                    MyQQView.refreshFriendList(allFriend);
+//                    for (Friend friend : allFriend) {
+//                        if(friend.getFriendId().equals(msg.getSenderId())){
+//                            MyQQView.refreshFriendList(friend);
+//                            break;
+//                        }
+//                    }
                 }else if(MessageType.SUCCESS_MAKE_FRIEND_TO_PERMIT.equals(msg.getMsgType())){
                     //同意好友申请成功
                     new NotificationView().permitMakeFriendSuccess(msg.getSenderId());
                     //刷新好友列表
                     List<Friend> allFriend = new FriendRequest().findAllFriend(msg.getGetterId());
-                    new MyQQView(msg.getGetterId()).showFriendList(allFriend);
+                    MyQQView.refreshFriendList(allFriend);
+//                    for (Friend friend : allFriend) {
+//                        if(friend.getFriendId().equals(msg.getSenderId())){
+//                            MyQQView.refreshFriendList(friend);
+//                            break;
+//                        }
+//                    }
                 }else if(MessageType.SEND_SUCCESS.equals(msg.getMsgType())){
                     //发送消息成功
                     new ChatView(msg.getSenderId(),msg.getGetterId()).addMessage(msg);

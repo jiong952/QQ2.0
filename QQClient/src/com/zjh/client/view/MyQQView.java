@@ -8,14 +8,13 @@ import com.zjh.common.FriendNode;
 import com.zjh.common.User;
 
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.TreePath;
+import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -26,23 +25,21 @@ import java.util.List;
 public class MyQQView extends JFrame {
     private UserRequest userRequest;
     private FriendRequest friendRequest = new FriendRequest();
-    private List<Friend> friendList;
     private User user;
+    public static JScrollPane jsp;
+    //好友列表结点
     //当前用户的id
     private String userId;
+
     /**窗口**/
     JFrame frame; //frame窗口
     /**面板**/
     JPanel northPanel;//北部面板
-    JTabbedPane tab; //南部选项卡
+    public static JTabbedPane tab; //南部选项卡
 //    JPanel southPanel;//南部面板
     /**按钮**/
     JButton updateInfoButton;//修改个人信息按钮 点击弹出UpdateInfoView
     JButton addFriendButton;//添加好友按钮 点击弹出SearchFriendView
-    /**标签**/
-    JLabel avatarLabel;//北部头像标签
-    JLabel userNameLabel;//北部用户名标签
-    JLabel signatureLabel;//北部个性签名标签
 
     public static void main(String[] args) {
         new MyQQView("123");
@@ -56,10 +53,6 @@ public class MyQQView extends JFrame {
         //在管理用户信息类中拿到user全部信息
         this.user = ManageUser.getUser(userId);
         this.userRequest = new UserRequest(user);
-//        System.out.println(user);
-        //请求好友列表信息
-        friendList = friendRequest.findAllFriend(userId);
-        System.out.println(friendList);
         //设置窗口大小和位置
         frame = new JFrame(userId);
         Toolkit t=Toolkit.getDefaultToolkit();
@@ -135,10 +128,7 @@ public class MyQQView extends JFrame {
      * @return {@link JTabbedPane}
      */
     public JTabbedPane center(){
-
         JTabbedPane tab = new JTabbedPane(JTabbedPane.TOP);
-//        tab.setLayout(new GridLayout(1,1));
-//        tab.setPreferredSize(new Dimension(0,400));
         tab.add("好友列表",friendPanel());
         tab.add("群聊列表",groupPanel());
         tab.setSelectedIndex(0);
@@ -151,77 +141,10 @@ public class MyQQView extends JFrame {
      * @return {@link JPanel}
      */
     public JScrollPane friendPanel(){
-//        JPanel panel = new JPanel();
-        //好友列表树
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode();
-        DefaultMutableTreeNode friend = new DefaultMutableTreeNode("我的好友");
-        DefaultMutableTreeNode stranger = new DefaultMutableTreeNode("陌生人");
-        DefaultMutableTreeNode blacklist = new DefaultMutableTreeNode("黑名单");
-
-        //加入好友结点
-        for (Friend friend1 : friendList) {
-            // TODO: 2022-05-22 先不区分黑名单 后续拓展
-            friend.add(new FriendNode(friend1));
-        }
-//        DefaultMutableTreeNode friend1 = new DefaultMutableTreeNode("好友1");
-//        DefaultMutableTreeNode friend2 = new DefaultMutableTreeNode("好友2");
-//        DefaultMutableTreeNode friend3 = new DefaultMutableTreeNode("好友3");
-//        friend.add(friend1);
-//        friend.add(friend2);
-//        friend.add(friend3);
-        // 以根节点创建树
-        JTree contacts_tree = new JTree(root);
-        // 设置为点击一次展开
-        contacts_tree.setToggleClickCount(1);
-        // 将节点添加到根节点
-        root.add(friend);
-        root.add(stranger);
-        root.add(blacklist);
-        // 隐藏根节点
-        contacts_tree.setRootVisible(false);
-        // 展开树(在根节点隐藏时,能看见子节点)
-        contacts_tree.expandPath(new TreePath(root));
-        // 设置透明
-//        contacts_tree.setOpaque(false);
-        // 隐藏根柄
-        contacts_tree.setShowsRootHandles(false);
-        //自定义列表样式
-        contacts_tree.setCellRenderer(new DefaultTreeCellRenderer(){
-            // 收起和展开图片设置为三角形
-            final ImageIcon closeIcon = new ImageIcon("img/close.png");
-            final ImageIcon openIcon = new ImageIcon("img/open.png");
-              public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
-                                                            boolean leaf, int row, boolean hasFocus) {
-                  super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-                  //节点为展开时显示的图片
-                  if (!expanded) {
-                      setIcon(closeIcon);
-                  } else {
-                      setIcon(openIcon);
-                  }
-                  // 设置未选中节点时背景色为白色且完全透明，0表示透明,255表示正常
-                  setBackgroundNonSelectionColor(new Color(255, 255, 255, 0));
-                  // 设置选中节点时背景色为白色，透明度改为100，来区分未选中状态
-                  setBackgroundSelectionColor(new Color(255, 255, 255, 100));
-                  return this;
-              }
-        });
-        // 使节点能响应相应操作
-        contacts_tree.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                Object node = contacts_tree.getLastSelectedPathComponent();
-                String str = node.toString();
-                if (!str.equals("我的好友") && !str.equals("黑名单") && !str.equals("陌生人") && e.getClickCount() == 2) {
-                    //点击两次好友，弹出对话框
-                    JOptionPane.showMessageDialog(null,"聊天");
-                }
-            }
-
-        });
+        List<Friend> friendList = friendRequest.findAllFriend(userId);
+        JTree jTree = getJTree(friendList);
         //把好友树放到滚动面板
-        JScrollPane jsp = new JScrollPane(contacts_tree);
-//        jsp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        jsp = new JScrollPane(jTree);
         return jsp;
     }
 
@@ -240,11 +163,91 @@ public class MyQQView extends JFrame {
     }
 
 
-    public void showFriendList(List<Friend> allFriend){
-        // TODO: 2022-05-11 后期上方会有表格类，调用方法刷新表格数据
-        System.out.println("\n=========好友列表=========");
-        for (Friend friend : allFriend) {
-            System.out.println("【"+(friend.isOnLine() == true? "在线":"离线")+"】"+friend.getFriendId());
+    /**
+     * 刷新好友列表
+     *
+     * @param allFriend 新上线好友
+     */
+    public static void refreshFriendList(List<Friend> allFriend){
+        tab.remove(0);
+        JScrollPane jScrollPane = new JScrollPane(getJTree(allFriend));
+//        JTree jTree = getJTree(allFriend);
+        tab.insertTab("好友列表",null,jScrollPane,"好友列表",0);
+//        tab.add(jScrollPane,0);
+    }
+
+    //返回JTree的数据
+    public static JTree getJTree(List<Friend> allFriend){
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode();
+        DefaultMutableTreeNode friend = new DefaultMutableTreeNode("我的好友");
+        DefaultMutableTreeNode stranger = new DefaultMutableTreeNode("陌生人");
+        DefaultMutableTreeNode blacklist = new DefaultMutableTreeNode("黑名单");
+        root.add(friend);
+        root.add(stranger);
+        root.add(blacklist);
+        for (Friend friend1 : allFriend) {
+            // TODO: 2022-05-22 先不区分黑名单 后续拓展
+            friend.add(new FriendNode(friend1));
         }
+        DefaultTreeModel defaultTreeModel = new DefaultTreeModel(root);
+        JTree contacts_tree = new JTree();
+        // 设置数据
+        contacts_tree.setModel(defaultTreeModel);
+        // 设置为点击一次展开
+        contacts_tree.setToggleClickCount(1);
+        // 隐藏根节点
+        contacts_tree.setRootVisible(false);
+        // 展开树(在根节点隐藏时,能看见子节点)
+        contacts_tree.expandPath(new TreePath(defaultTreeModel.getRoot()));
+        // 隐藏根柄
+        contacts_tree.setShowsRootHandles(false);
+        //自定义列表样式
+        contacts_tree.setCellRenderer(new DefaultTreeCellRenderer(){
+            // 收起和展开图片设置为三角形
+            final ImageIcon closeIcon = new ImageIcon("img/close.png");
+            final ImageIcon openIcon = new ImageIcon("img/open.png");
+            public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
+                                                          boolean leaf, int row, boolean hasFocus) {
+                super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+                //节点为展开时显示的图片
+                if (!expanded) {
+                    setIcon(closeIcon);
+                } else {
+                    setIcon(openIcon);
+                }
+                //设置二级列表
+                String str = value.toString();
+                if (!str.equals("我的好友") && !str.equals("黑名单") && !str.equals("陌生人")) {
+                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+                    FriendNode people = (FriendNode) node;
+                    // 根据不同的好友对象设置他们的头像
+                    setIcon(new ImageIcon(people.getImageIcon().getImage().getScaledInstance(30, 30,
+                            JFrame.DO_NOTHING_ON_CLOSE)));
+                    // 将好友的昵称字体设置得比类别更小
+                    setFont(new Font("宋体", Font.BOLD, 12));
+                } else {
+                    setFont(new Font("宋体", Font.BOLD, 15));
+                }
+                // 设置未选中节点时背景色为白色且完全透明，0表示透明,255表示正常
+                setBackgroundNonSelectionColor(new Color(255, 255, 255, 0));
+                // 设置选中节点时背景色为白色，透明度改为100，来区分未选中状态
+                setBackgroundSelectionColor(new Color(255, 255, 255, 100));
+                return this;
+            }
+        });
+        // 使节点能响应相应操作
+        contacts_tree.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Object node = contacts_tree.getLastSelectedPathComponent();
+                String str = node.toString();
+                if (!str.equals("我的好友") && !str.equals("黑名单") && !str.equals("陌生人") && e.getClickCount() == 2) {
+                    //todo 点击两次好友，弹出对话框
+                    JOptionPane.showMessageDialog(null,"和"+str+"聊天");
+                }
+            }
+
+        });
+        return contacts_tree;
     }
 }
