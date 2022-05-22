@@ -143,6 +143,8 @@ public class MyQQView extends JFrame {
     public JScrollPane friendPanel(){
         List<Friend> friendList = friendRequest.findAllFriend(userId);
         JTree jTree = getJTree(friendList);
+        //默认展开所有结点
+        expandAll(jTree,new TreePath(jTree.getModel().getRoot()),true);
         //把好友树放到滚动面板
         jsp = new JScrollPane(jTree);
         return jsp;
@@ -170,10 +172,12 @@ public class MyQQView extends JFrame {
      */
     public static void refreshFriendList(List<Friend> allFriend){
         tab.remove(0);
-        JScrollPane jScrollPane = new JScrollPane(getJTree(allFriend));
-//        JTree jTree = getJTree(allFriend);
+        JTree jTree = getJTree(allFriend);
+        //默认展开所有结点
+        expandAll(jTree,new TreePath(jTree.getModel().getRoot()),true);
+        JScrollPane jScrollPane = new JScrollPane(jTree);
         tab.insertTab("好友列表",null,jScrollPane,"好友列表",0);
-//        tab.add(jScrollPane,0);
+        tab.setSelectedIndex(0);
     }
 
     //返回JTree的数据
@@ -250,4 +254,27 @@ public class MyQQView extends JFrame {
         });
         return contacts_tree;
     }
+
+    // 展开树的所有节点的方法
+    private static void expandAll(JTree tree, TreePath parent, boolean expand)
+    {
+        TreeNode node = (TreeNode) parent.getLastPathComponent();
+        if (node.getChildCount() >= 0)
+        {
+            for (Enumeration e = node.children(); e.hasMoreElements();)
+            {
+                TreeNode n = (TreeNode) e.nextElement();
+                TreePath path = parent.pathByAddingChild(n);
+                expandAll(tree, path, expand);
+            }
+        }
+        if (expand)
+        {
+            tree.expandPath(parent);
+        } else
+        {
+            tree.collapsePath(parent);
+        }
+    }
+
 }
