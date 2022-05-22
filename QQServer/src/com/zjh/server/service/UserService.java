@@ -20,10 +20,10 @@ public class UserService {
      * @param password 密码
      * @return boolean
      */
-    public boolean checkUser(String userId, String password){
+    public User checkUser(String userId, String password){
         User check = userDao.check(userId);
-        if(check != null && userId.equals(check.getUserId()) && password.equals(check.getPassword())) return true;
-        return false;
+        if(check != null && userId.equals(check.getUserId()) && password.equals(check.getPassword())) return check;
+        return null;
     }
 
     /**

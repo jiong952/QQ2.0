@@ -1,6 +1,7 @@
 package com.zjh.server.dao;
 
 import com.zjh.common.Friend;
+import com.zjh.server.utils.FileUtils;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ColumnListHandler;
 import org.apache.commons.dbutils.handlers.MapHandler;
@@ -37,14 +38,18 @@ public class FriendDao {
         List<Friend> list = new ArrayList<>();
         String sql ="SELECT `friend_id` AS friendId,`is_ask` AS isAsk,`star` \n" +
                 "AS star,`remark` AS remark,f.`create_time` AS `time`,\n" +
-                "`user_name` AS friendName,`avatar` AS avatar,`gender` AS gender,\n" +
-                "`age` AS age,`phone_number` AS phoneNumber\n" +
+                "`user_name` AS friendName,`avatar_path` AS avatarPath,`gender` AS gender,\n" +
+                "`age` AS age,`signature` AS signature\n" +
                 "FROM `friend`  f\n" +
                 "INNER JOIN `user` u\n" +
                 "ON u.`user_id` = f.`my_id`\n" +
                 "WHERE `my_id` = ?";
         try {
             list = queryRunner.query(sql, new BeanListHandler<>(Friend.class),userId);
+            //遍历好友，从本地读出头像文件
+            for (Friend friend : list) {
+                friend.setAvatar(FileUtils.readFile(friend.getAvatarPath()));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             throw new DaoException("获取好友列表异常",e);

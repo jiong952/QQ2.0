@@ -20,12 +20,14 @@ public class Friend implements Serializable {
     private boolean onLine;
     /**头像**/
     private byte[] avatar;
+    /**头像路径**/
+    private String avatarPath;
     /**性别 默认2 男1 女0**/
     private int gender;
     /**年龄**/
     private int age;
-    /**电话号码**/
-    private String phoneNumber;
+    /**个性签名**/
+    private String signature;
     /**备注**/
     private String remark;
     /**这个好友是否是发送好友申请的人**/
@@ -40,6 +42,14 @@ public class Friend implements Serializable {
     private Date time;
 
 
+    public String getAvatarPath() {
+        return avatarPath;
+    }
+
+    public void setAvatarPath(String avatarPath) {
+        this.avatarPath = avatarPath;
+    }
+
     @Override
     public String toString() {
         return "Friend{" +
@@ -47,9 +57,10 @@ public class Friend implements Serializable {
                 ", friendName='" + friendName + '\'' +
                 ", onLine=" + onLine +
                 ", avatar=" + Arrays.toString(avatar) +
+                ", avatarPath='" + avatarPath + '\'' +
                 ", gender=" + gender +
                 ", age=" + age +
-                ", phoneNumber='" + phoneNumber + '\'' +
+                ", signature='" + signature + '\'' +
                 ", remark='" + remark + '\'' +
                 ", isAsk=" + isAsk +
                 ", star=" + star +
@@ -58,14 +69,15 @@ public class Friend implements Serializable {
                 '}';
     }
 
-    public Friend(String friendId, String friendName, boolean onLine, byte[] avatar, int gender, int age, String phoneNumber, String remark, boolean isAsk, boolean star, Set<String> group, Date time) {
+    public Friend(String friendId, String friendName, boolean onLine, byte[] avatar, String avatarPath, int gender, int age, String signature, String remark, boolean isAsk, boolean star, Set<String> group, Date time) {
         this.friendId = friendId;
         this.friendName = friendName;
         this.onLine = onLine;
         this.avatar = avatar;
+        this.avatarPath = avatarPath;
         this.gender = gender;
         this.age = age;
-        this.phoneNumber = phoneNumber;
+        this.signature = signature;
         this.remark = remark;
         this.isAsk = isAsk;
         this.star = star;
@@ -144,12 +156,12 @@ public class Friend implements Serializable {
         this.age = age;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getSignature() {
+        return signature;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setSignature(String signature) {
+        this.signature = signature;
     }
 
     public String getRemark() {

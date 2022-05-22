@@ -86,16 +86,17 @@ public class ConnectToSingleControllerThread {
                     case "checkUser":
                         //登录验证
                         User user = (User) requestMsg.getParams()[0];
-                        boolean flag = userService.checkUser(user.getUserId(), user.getPassword());
-                        if(flag){
+                        User flag = userService.checkUser(user.getUserId(), user.getPassword());
+                        if(flag != null){
                             //登录成功
                             //检查是否已登录
                             if(ManageServerConnectClientThread.getThread(user.getUserId()) == null){
-
                                 String time = sdf.format(new Date());
                                 //响应成功
                                 ResponseMsg responseMsg = new ResponseMsg();
                                 responseMsg.setStateCode(StateCode.SUCCEED);
+                                //同时返回从数据库中读出来的用户信息
+                                responseMsg.setReturnValue(flag);
                                 oos.writeObject(responseMsg);
                                 //创建一个线程与登录客户端保持通信
                                 ServerThread serverThread = new ServerThread(user.getUserId(), socket);

@@ -22,12 +22,22 @@ public class User implements Serializable {
     private boolean onLine;
     /**头像**/
     private byte[] avatar;
+    /**头像存储路径**/
+    private String avatarPath;
     /**性别 默认2 男1 女0**/
     private int gender;
     /**年龄**/
     private int age;
-    /**电话号码**/
-    private String phoneNumber;
+    /**个性签名**/
+    private String signature;
+
+    public String getAvatarPath() {
+        return avatarPath;
+    }
+
+    public void setAvatarPath(String avatarPath) {
+        this.avatarPath = avatarPath;
+    }
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
@@ -89,26 +99,27 @@ public class User implements Serializable {
         this.age = age;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getSignature() {
+        return signature;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setSignature(String signature) {
+        this.signature = signature;
     }
 
     public User() {
     }
 
-    public User(String userId, String password, String userName, boolean onLine, byte[] avatar, int gender, int age, String phoneNumber) {
+    public User(String userId, String password, String userName, boolean onLine, byte[] avatar, String avatarPath, int gender, int age, String signature) {
         this.userId = userId;
         this.password = password;
         this.userName = userName;
         this.onLine = onLine;
         this.avatar = avatar;
+        this.avatarPath = avatarPath;
         this.gender = gender;
         this.age = age;
-        this.phoneNumber = phoneNumber;
+        this.signature = signature;
     }
 
     public User(String userId, String password) {
@@ -124,9 +135,10 @@ public class User implements Serializable {
                 ", userName='" + userName + '\'' +
                 ", onLine=" + onLine +
                 ", avatar=" + Arrays.toString(avatar) +
+                ", avatarPath='" + avatarPath + '\'' +
                 ", gender=" + gender +
                 ", age=" + age +
-                ", phoneNumber='" + phoneNumber + '\'' +
+                ", signature='" + signature + '\'' +
                 '}';
     }
 }

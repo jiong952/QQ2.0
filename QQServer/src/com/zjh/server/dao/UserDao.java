@@ -2,6 +2,7 @@ package com.zjh.server.dao;
 
 import com.zjh.common.Friend;
 import com.zjh.common.User;
+import com.zjh.server.utils.FileUtils;
 import com.zjh.server.utils.JdbcUtils;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
@@ -54,10 +55,13 @@ public class UserDao {
      */
     public User check(String userId){
         User user = new User();
-        String sql = "SELECT `user_id` AS userId,`password` AS `password` FROM `user` WHERE `user_id`=?";
+        String sql = "SELECT `user_id` AS userId,`password` AS `password`,`user_name` AS userName,`avatar_path` AS avatarPath," +
+                "`gender` AS gender,`age` AS age,`signature` AS signature FROM `user` WHERE `user_id`=?";
         Object[] params = {userId};
         try {
             user = queryRunner.query(sql,new BeanHandler<>(User.class),userId);
+            //从本地读取头像文件
+            user.setAvatar(FileUtils.readFile(user.getAvatarPath()));
         } catch (SQLException e) {
             e.printStackTrace();
             throw new DaoException("登录失败",e);
@@ -93,11 +97,15 @@ public class UserDao {
     public List<User> searchUserById(String userId){
         List<User> list = new ArrayList<>();
         String sql = "SELECT  `user_id` AS userId," +
-                "`user_name` AS userName,`avatar` AS avatar,`gender` AS gender,\n" +
-                "`age` AS age,`phone_number` AS phoneNumber\n" +
+                "`user_name` AS userName,`avatar_path` AS avatarPath,`gender` AS gender,\n" +
+                "`age` AS age,`signature` AS signature\n" +
                 " FROM `user` WHERE `user_id` LIKE '%' ? '%'";
         try {
             list = queryRunner.query(sql, new BeanListHandler<>(User.class), userId);
+            //遍历从本地读出头像
+            for (User user : list) {
+                user.setAvatar(FileUtils.readFile(user.getAvatarPath()));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             throw new DaoException("搜索用户异常");
@@ -114,10 +122,11 @@ public class UserDao {
     public List<Friend> findAllFriend(List<String> list){
         List<Friend> friendList = new ArrayList<>();
         for (String id : list) {
-            String sql = "SELECT `user_id` AS friendId,`user_name` AS friendName,`avatar` AS avatar,`gender` AS gender,\n" +
-                    "`age` AS age ,`phone_number` AS `phone_number`  FROM `user` WHERE `user_id`= ?";
+            String sql = "SELECT `user_id` AS friendId,`user_name` AS friendName,`avatar_path` AS avatarPath,`gender` AS gender,\n" +
+                    "`age` AS age ,`signature` AS signature  FROM `user` WHERE `user_id`= ?";
             try {
                 Friend query = queryRunner.query(sql, new BeanHandler<>(Friend.class), id);
+                query.setAvatar(FileUtils.readFile(query.getAvatarPath()));
                 friendList.add(query);
             } catch (SQLException e) {
                 e.printStackTrace();
