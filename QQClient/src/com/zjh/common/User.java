@@ -123,7 +123,6 @@ public class User implements Serializable {
                 ", password='" + password + '\'' +
                 ", userName='" + userName + '\'' +
                 ", onLine=" + onLine +
-                ", avatar=" + Arrays.toString(avatar) +
                 ", gender=" + gender +
                 ", age=" + age +
                 ", signature='" + signature + '\'' +

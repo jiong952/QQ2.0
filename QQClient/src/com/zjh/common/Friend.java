@@ -46,7 +46,6 @@ public class Friend implements Serializable {
                 "friendId='" + friendId + '\'' +
                 ", friendName='" + friendName + '\'' +
                 ", onLine=" + onLine +
-                ", avatar=" + Arrays.toString(avatar) +
                 ", gender=" + gender +
                 ", age=" + age +
                 ", signature='" + signature + '\'' +

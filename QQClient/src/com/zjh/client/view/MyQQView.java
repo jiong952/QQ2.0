@@ -1,12 +1,19 @@
 package com.zjh.client.view;
 
 import com.zjh.client.manage.ManageUser;
+import com.zjh.client.request.FriendRequest;
 import com.zjh.client.request.UserRequest;
 import com.zjh.common.Friend;
+import com.zjh.common.FriendNode;
 import com.zjh.common.User;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
@@ -18,6 +25,8 @@ import java.util.List;
  */
 public class MyQQView extends JFrame {
     private UserRequest userRequest;
+    private FriendRequest friendRequest = new FriendRequest();
+    private List<Friend> friendList;
     private User user;
     //当前用户的id
     private String userId;
@@ -47,7 +56,10 @@ public class MyQQView extends JFrame {
         //在管理用户信息类中拿到user全部信息
         this.user = ManageUser.getUser(userId);
         this.userRequest = new UserRequest(user);
-        System.out.println(user);
+//        System.out.println(user);
+        //请求好友列表信息
+        friendList = friendRequest.findAllFriend(userId);
+        System.out.println(friendList);
         //设置窗口大小和位置
         frame = new JFrame(userId);
         Toolkit t=Toolkit.getDefaultToolkit();
@@ -72,7 +84,6 @@ public class MyQQView extends JFrame {
 
             }
         });
-//        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.setResizable(false);
         //加入各部分面板
         northPanel = north();
@@ -92,9 +103,12 @@ public class MyQQView extends JFrame {
         jPanel.setLayout(null);
         jPanel.setPreferredSize(new Dimension(0,100));
         //头像
-        ImageIcon ss=new ImageIcon(user.getAvatar());
-        JLabel cs=new JLabel(ss);
+        JLabel cs=new JLabel();
         cs.setBounds(5,15,80,80);
+        ImageIcon imageIcon=new ImageIcon(user.getAvatar());
+        //设置缩放图片
+        imageIcon = new ImageIcon(imageIcon.getImage().getScaledInstance(cs.getWidth(),-1,Image.SCALE_DEFAULT));
+        cs.setIcon(imageIcon);
         //昵称
         JLabel nameJLabel = new JLabel();
         nameJLabel.setText(user.getUserName());
@@ -103,7 +117,8 @@ public class MyQQView extends JFrame {
         JLabel signJLabel = new JLabel();
         signJLabel.setText(user.getSignature());
         signJLabel.setBounds(100,40,150,20);
-        signJLabel.setFont(new Font("黑体",Font.BOLD,15));//字体和字体大小
+        signJLabel.setFont(new Font("黑体",Font.BOLD,12));//字体和字体大小
+        signJLabel.setForeground(new Color(100,149,238));
         //个性签名
 
         jPanel.add(cs);
@@ -135,13 +150,79 @@ public class MyQQView extends JFrame {
      *
      * @return {@link JPanel}
      */
-    public JPanel friendPanel(){
-        JPanel panel = new JPanel();
-        JLabel filler=new JLabel("好友列表");
-        filler.setHorizontalAlignment(JLabel.CENTER);
-        panel.setLayout(new GridLayout(1,1));
-        panel.add(filler);
-        return panel;
+    public JScrollPane friendPanel(){
+//        JPanel panel = new JPanel();
+        //好友列表树
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode();
+        DefaultMutableTreeNode friend = new DefaultMutableTreeNode("我的好友");
+        DefaultMutableTreeNode stranger = new DefaultMutableTreeNode("陌生人");
+        DefaultMutableTreeNode blacklist = new DefaultMutableTreeNode("黑名单");
+
+        //加入好友结点
+        for (Friend friend1 : friendList) {
+            // TODO: 2022-05-22 先不区分黑名单 后续拓展
+            friend.add(new FriendNode(friend1));
+        }
+//        DefaultMutableTreeNode friend1 = new DefaultMutableTreeNode("好友1");
+//        DefaultMutableTreeNode friend2 = new DefaultMutableTreeNode("好友2");
+//        DefaultMutableTreeNode friend3 = new DefaultMutableTreeNode("好友3");
+//        friend.add(friend1);
+//        friend.add(friend2);
+//        friend.add(friend3);
+        // 以根节点创建树
+        JTree contacts_tree = new JTree(root);
+        // 设置为点击一次展开
+        contacts_tree.setToggleClickCount(1);
+        // 将节点添加到根节点
+        root.add(friend);
+        root.add(stranger);
+        root.add(blacklist);
+        // 隐藏根节点
+        contacts_tree.setRootVisible(false);
+        // 展开树(在根节点隐藏时,能看见子节点)
+        contacts_tree.expandPath(new TreePath(root));
+        // 设置透明
+//        contacts_tree.setOpaque(false);
+        // 隐藏根柄
+        contacts_tree.setShowsRootHandles(false);
+        //自定义列表样式
+        contacts_tree.setCellRenderer(new DefaultTreeCellRenderer(){
+            // 收起和展开图片设置为三角形
+            final ImageIcon closeIcon = new ImageIcon("img/close.png");
+            final ImageIcon openIcon = new ImageIcon("img/open.png");
+              public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
+                                                            boolean leaf, int row, boolean hasFocus) {
+                  super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+                  //节点为展开时显示的图片
+                  if (!expanded) {
+                      setIcon(closeIcon);
+                  } else {
+                      setIcon(openIcon);
+                  }
+                  // 设置未选中节点时背景色为白色且完全透明，0表示透明,255表示正常
+                  setBackgroundNonSelectionColor(new Color(255, 255, 255, 0));
+                  // 设置选中节点时背景色为白色，透明度改为100，来区分未选中状态
+                  setBackgroundSelectionColor(new Color(255, 255, 255, 100));
+                  return this;
+              }
+        });
+        // 使节点能响应相应操作
+        contacts_tree.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Object node = contacts_tree.getLastSelectedPathComponent();
+                String str = node.toString();
+                if (!str.equals("我的好友") && !str.equals("黑名单") && !str.equals("陌生人") && e.getClickCount() == 2) {
+                    //点击两次好友，弹出对话框
+                    JOptionPane.showMessageDialog(null,"聊天");
+                }
+            }
+
+        });
+        //把好友树放到滚动面板
+        JScrollPane jsp = new JScrollPane(contacts_tree);
+//        jsp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        return jsp;
     }
 
     /**
