@@ -196,7 +196,7 @@ public class QQViewCommandLine {
                                     new UpdateFriendView(userId).update(updateFriend);
                                     break;
                                 case "a":
-                                    new SearchUserView(userId).searchUserById();
+                                    new SearchFriendView(userId).searchUserById();
                                     break;
                                 case "b":
                                     List<Friend> allFriendb = friendRequest.findAllFriend(userId);

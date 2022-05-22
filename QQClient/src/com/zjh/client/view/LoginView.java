@@ -60,7 +60,8 @@ public class LoginView extends JFrame {
         Dimension d=t.getScreenSize();
         frame.setBounds((d.width-d.width/3)/2,(d.height-d.height/3)/2,350,250);
         frame.setIconImage((new ImageIcon("img/icon.jpg").getImage()));
-        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        //直接让程序退出
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setResizable(false);
 
 

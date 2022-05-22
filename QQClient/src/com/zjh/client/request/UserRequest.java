@@ -25,6 +25,13 @@ public class UserRequest {
     private User u = new User();
     private Socket socket;
 
+    public UserRequest() {
+    }
+
+    public UserRequest(User u) {
+        this.u = u;
+    }
+
     /**
      * 检查用户
      *
@@ -81,7 +88,7 @@ public class UserRequest {
     }
 
     /**
-     * 拉取在线用户
+     * 拉取在线用户 【废弃】
      */
     //拉取在线用户
     public void onLineFriendList(){
@@ -90,6 +97,7 @@ public class UserRequest {
         message.setMsgType(MessageType.MESSAGE_GET_ONLINE_FRIEND);
         message.setSenderId(u.getUserId());
         try {
+            socket = new Socket(InetAddress.getByName(StaticString.server_ip), StaticString.server_port);
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(message);
         } catch (IOException e) {
@@ -106,7 +114,9 @@ public class UserRequest {
         message.setSenderId(u.getUserId());
         message.setMsgType(MessageType.MESSAGE_CLIENT_EXIT);
         try {
-            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            ClientConnectServerThread thread = ManageClientConnectServerThread.getThread(u.getUserId());
+//            socket = new Socket(InetAddress.getByName(StaticString.server_ip), StaticString.server_port);
+            ObjectOutputStream oos = new ObjectOutputStream(thread.getSocket().getOutputStream());
             oos.writeObject(message);
         } catch (IOException e) {
             e.printStackTrace();

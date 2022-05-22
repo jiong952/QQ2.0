@@ -13,10 +13,10 @@ import java.util.List;
  * @description: 搜索用户界面
  * @since 2022-05-11 17:50
  */
-public class SearchUserView extends JFrame {
+public class SearchFriendView extends JFrame {
     private String myId;
 
-    public SearchUserView(String myId) {
+    public SearchFriendView(String myId) {
         this.myId = myId;
     }
 

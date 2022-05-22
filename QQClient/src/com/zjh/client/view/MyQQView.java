@@ -1,11 +1,14 @@
 package com.zjh.client.view;
 
 import com.zjh.client.manage.ManageUser;
+import com.zjh.client.request.UserRequest;
 import com.zjh.common.Friend;
 import com.zjh.common.User;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 
 /**
@@ -14,15 +17,87 @@ import java.util.List;
  * @since 2022-05-11 16:18
  */
 public class MyQQView extends JFrame {
+    private UserRequest userRequest;
     //当前用户的id
     private String userId;
+    /**窗口**/
+    JFrame frame; //frame窗口
+    /**面板**/
+    JPanel northPanel;//北部面板
+    JPanel southPanel;//南部面板
+    /**按钮**/
+    JButton updateInfoButton;//修改个人信息按钮 点击弹出UpdateInfoView
+    JButton addFriendButton;//添加好友按钮 点击弹出SearchFriendView
+    /**标签**/
+    JLabel avatarLabel;//北部头像标签
+    JLabel userNameLabel;//北部用户名标签
+    JLabel signatureLabel;//北部个性签名标签
+
+    public static void main(String[] args) {
+        new MyQQView("123");
+    }
 
     public MyQQView(String userId){
         this.userId = userId;
         //在管理用户信息类中拿到user全部信息
         User user = ManageUser.getUser(userId);
+        this.userRequest = new UserRequest(user);
         System.out.println(user);
+        //设置窗口大小和位置
+        frame = new JFrame(userId);
+        Toolkit t=Toolkit.getDefaultToolkit();
+        Dimension d=t.getScreenSize();
+        frame.setBounds(d.width-250,0,250,500);
+        frame.setIconImage((new ImageIcon("img/icon.jpg").getImage()));
+        frame.addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                //0表示Y 1表示N
+                int check = JOptionPane.showConfirmDialog(frame, "确定要退出吗？", "退出提示", 0);
+                if(check == 0){
+                    //通知服务器 同时把所有manage中的界面删除掉
+                    userRequest.exit();
+                    System.out.println("用户退出");
+                }else {
+                    System.out.println("用户取消退出");
+                    //不做任何事情
+                    frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                }
+
+            }
+        });
+//        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        frame.setResizable(false);
+        //加入各部分面板
+        northPanel = north();
+        southPanel = south();
+        frame.add(northPanel,BorderLayout.NORTH);
+        frame.add(southPanel,BorderLayout.SOUTH);
+
+        frame.setVisible(true);
     }
+
+    /**
+     * 北部用户面板
+     *
+     * @return {@link JPanel}
+     */
+    public JPanel north(){
+        JPanel jPanel = new JPanel();
+        return jPanel;
+    }
+
+    /**
+     * 南部面板(选项卡 好友 群聊 滚动面板)
+     *
+     * @return {@link JPanel}
+     */
+    public JPanel south(){
+        JPanel jPanel = new JPanel();
+        return jPanel;
+    }
+
 
     public void showFriendList(List<Friend> allFriend){
         // TODO: 2022-05-11 后期上方会有表格类，调用方法刷新表格数据
