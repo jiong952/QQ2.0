@@ -3,18 +3,16 @@ package com.zjh.client.thread;
 import com.zjh.client.manage.ManageChatView;
 import com.zjh.client.request.FriendRequest;
 import com.zjh.client.view.ChatView;
-import com.zjh.client.view.FriendListView;
+import com.zjh.client.view.MyQQView;
 import com.zjh.client.view.FriendsVerifyView;
 import com.zjh.client.view.NotificationView;
 import com.zjh.common.Friend;
 import com.zjh.common.Message;
 import com.zjh.common.MessageType;
-import com.zjh.utils.FileUtils;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -112,7 +110,7 @@ public class ClientConnectServerThread extends Thread{
                     }
                     //刷新好友列表
                     List<Friend> allFriend = new FriendRequest().findAllFriend(msg.getGetterId());
-                    new FriendListView().showFriendList(allFriend);
+                    new MyQQView(msg.getGetterId()).showFriendList(allFriend);
                 }else if(MessageType.ASK_MAKE_FRIEND.equals(msg.getMsgType())){
                     //好友申请
                     new FriendsVerifyView().addVerifyRecord(msg.getSenderId(),msg.getGetterId());
@@ -121,13 +119,13 @@ public class ClientConnectServerThread extends Thread{
                     new NotificationView().askMakeFriendSuccess(msg.getSenderId());
                     //刷新好友列表
                     List<Friend> allFriend = new FriendRequest().findAllFriend(msg.getGetterId());
-                    new FriendListView().showFriendList(allFriend);
+                    new MyQQView(msg.getGetterId()).showFriendList(allFriend);
                 }else if(MessageType.SUCCESS_MAKE_FRIEND_TO_PERMIT.equals(msg.getMsgType())){
                     //同意好友申请成功
                     new NotificationView().permitMakeFriendSuccess(msg.getSenderId());
                     //刷新好友列表
                     List<Friend> allFriend = new FriendRequest().findAllFriend(msg.getGetterId());
-                    new FriendListView().showFriendList(allFriend);
+                    new MyQQView(msg.getGetterId()).showFriendList(allFriend);
                 }else if(MessageType.SEND_SUCCESS.equals(msg.getMsgType())){
                     //发送消息成功
                     new ChatView(msg.getSenderId(),msg.getGetterId()).addMessage(msg);

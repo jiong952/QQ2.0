@@ -278,14 +278,16 @@ public class LoginView extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if("".equals(usernameField.getText())||"".equals(new String(passwordField.getPassword()))){
+            if("QQ号".equals(usernameField.getText())||"".equals(usernameField.getText())||"密码".equals(new String(passwordField.getPassword()))||"".equals(new String(passwordField.getPassword()))){
                 JOptionPane.showMessageDialog(null,"请填写完所有信息！","错误",JOptionPane.ERROR_MESSAGE);
             }else {
                 String stateCode = userRequest.checkUser(usernameField.getText(), new String(passwordField.getPassword()));
                 if(StateCode.SUCCEED.equals(stateCode)){
                     JOptionPane.showMessageDialog(null,"登录成功！");
                     JOptionPane.showMessageDialog(null,"您好！用户"+usernameField.getText());
-                    // TODO: 2022-05-22 跳转页面 携带数据
+                    //跳转界面
+                    new MyQQView(usernameField.getText());
+                    frame.dispose();
                 }else if(StateCode.HAS_LOGIN.equals(stateCode)){
                     JOptionPane.showMessageDialog(null,"您已经登录，不可重复登录","错误",JOptionPane.ERROR_MESSAGE);
                 }else {

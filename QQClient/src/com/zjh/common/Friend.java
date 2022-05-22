@@ -24,8 +24,8 @@ public class Friend implements Serializable {
     private int gender;
     /**年龄**/
     private int age;
-    /**电话号码**/
-    private String phoneNumber;
+    /**个性签名**/
+    private String signature;
     /**备注**/
     private String remark;
     /**这个好友是否是发送好友申请的人**/
@@ -49,7 +49,7 @@ public class Friend implements Serializable {
                 ", avatar=" + Arrays.toString(avatar) +
                 ", gender=" + gender +
                 ", age=" + age +
-                ", phoneNumber='" + phoneNumber + '\'' +
+                ", signature='" + signature + '\'' +
                 ", remark='" + remark + '\'' +
                 ", isAsk=" + isAsk +
                 ", star=" + star +
@@ -58,14 +58,14 @@ public class Friend implements Serializable {
                 '}';
     }
 
-    public Friend(String friendId, String friendName, boolean onLine, byte[] avatar, int gender, int age, String phoneNumber, String remark, boolean isAsk, boolean star, Set<String> group, Date time) {
+    public Friend(String friendId, String friendName, boolean onLine, byte[] avatar, int gender, int age, String signature, String remark, boolean isAsk, boolean star, Set<String> group, Date time) {
         this.friendId = friendId;
         this.friendName = friendName;
         this.onLine = onLine;
         this.avatar = avatar;
         this.gender = gender;
         this.age = age;
-        this.phoneNumber = phoneNumber;
+        this.signature = signature;
         this.remark = remark;
         this.isAsk = isAsk;
         this.star = star;
@@ -144,12 +144,12 @@ public class Friend implements Serializable {
         this.age = age;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getSignature() {
+        return signature;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setSignature(String signature) {
+        this.signature = signature;
     }
 
     public String getRemark() {
@@ -175,5 +175,4 @@ public class Friend implements Serializable {
     public void setGroup(Set<String> group) {
         this.group = group;
     }
-
 }

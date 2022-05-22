@@ -1,5 +1,6 @@
 package com.zjh.client.request;
 
+import com.zjh.client.manage.ManageUser;
 import com.zjh.client.thread.ClientConnectServerThread;
 import com.zjh.client.manage.ManageClientConnectServerThread;
 import com.zjh.common.*;
@@ -59,6 +60,8 @@ public class UserRequest {
                 //启动线程
                 connectServerThread.start();
                 connectServerThread.setPriority(10);
+                //把用户信息也放到一个管理类
+                ManageUser.addUser(userId, (User) responseMsg.getReturnValue());
                 //为了方便管理多用户，这里创建一个类进行统一管理
                 ManageClientConnectServerThread.addThread(userId,connectServerThread);
                 return StateCode.SUCCEED;
