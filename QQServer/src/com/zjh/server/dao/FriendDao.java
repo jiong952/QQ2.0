@@ -36,18 +36,24 @@ public class FriendDao {
      */
     public List<Friend> findAllFriend(String userId){
         List<Friend> list = new ArrayList<>();
-        String sql ="SELECT `friend_id` AS friendId,`is_ask` AS isAsk,`star` \n" +
-                "AS star,`remark` AS remark,f.`create_time` AS `time`,\n" +
-                "`user_name` AS friendName,`avatar_path` AS avatarPath,`gender` AS gender,\n" +
-                "`age` AS age,`signature` AS signature\n" +
+        String sql ="SELECT `friend_id` AS friendId,`is_ask` AS isAsk,`star` AS star,`remark` AS remark,f.`create_time` AS `time`,\n" +
+                "f1.`user_name` AS friendName,f1.`avatar_path` AS avatarPath,f1.`gender` AS gender,\n" +
+                "f1.`age` AS age,f1.`signature` AS signature\n" +
                 "FROM `friend`  f\n" +
-                "INNER JOIN `user` u\n" +
-                "ON u.`user_id` = f.`my_id`\n" +
+                "INNER JOIN `user` u \n" +
+                "INNER JOIN `user` f1\n" +
+                "ON u.`user_id` = f.`my_id` AND f.`friend_id` = f1.`user_id`\n" +
                 "WHERE `my_id` = ?";
         try {
             list = queryRunner.query(sql, new BeanListHandler<>(Friend.class),userId);
             //遍历好友，从本地读出头像文件
             for (Friend friend : list) {
+                if(friend.getFriendName() == null){
+                    friend.setFriendName(friend.getFriendId());
+                }
+                if(friend.getSignature() == null){
+                    friend.setSignature("");
+                }
                 friend.setAvatar(FileUtils.readFile(friend.getAvatarPath()));
             }
         } catch (SQLException e) {
