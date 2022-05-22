@@ -25,7 +25,8 @@ public class MyQQView extends JFrame {
     JFrame frame; //frame窗口
     /**面板**/
     JPanel northPanel;//北部面板
-    JPanel southPanel;//南部面板
+    JTabbedPane tab; //南部选项卡
+//    JPanel southPanel;//南部面板
     /**按钮**/
     JButton updateInfoButton;//修改个人信息按钮 点击弹出UpdateInfoView
     JButton addFriendButton;//添加好友按钮 点击弹出SearchFriendView
@@ -36,6 +37,9 @@ public class MyQQView extends JFrame {
 
     public static void main(String[] args) {
         new MyQQView("123");
+    }
+
+    public MyQQView() {
     }
 
     public MyQQView(String userId){
@@ -72,10 +76,9 @@ public class MyQQView extends JFrame {
         frame.setResizable(false);
         //加入各部分面板
         northPanel = north();
-        southPanel = south();
+        tab= center();
         frame.add(northPanel,BorderLayout.NORTH);
-        frame.add(southPanel,BorderLayout.SOUTH);
-
+        frame.add(tab,BorderLayout.CENTER);
         frame.setVisible(true);
     }
 
@@ -110,14 +113,49 @@ public class MyQQView extends JFrame {
         return jPanel;
     }
 
+
     /**
-     * 南部面板(选项卡 好友 群聊 滚动面板)
+     * 南部选项卡
+     *
+     * @return {@link JTabbedPane}
+     */
+    public JTabbedPane center(){
+
+        JTabbedPane tab = new JTabbedPane(JTabbedPane.TOP);
+//        tab.setLayout(new GridLayout(1,1));
+//        tab.setPreferredSize(new Dimension(0,400));
+        tab.add("好友列表",friendPanel());
+        tab.add("群聊列表",groupPanel());
+        tab.setSelectedIndex(0);
+        return tab;
+    }
+
+    /**
+     * 朋友列表面板
      *
      * @return {@link JPanel}
      */
-    public JPanel south(){
-        JPanel jPanel = new JPanel();
-        return jPanel;
+    public JPanel friendPanel(){
+        JPanel panel = new JPanel();
+        JLabel filler=new JLabel("好友列表");
+        filler.setHorizontalAlignment(JLabel.CENTER);
+        panel.setLayout(new GridLayout(1,1));
+        panel.add(filler);
+        return panel;
+    }
+
+    /**
+     * 群里面板
+     *
+     * @return {@link JPanel}
+     */
+    public JPanel groupPanel(){
+        JPanel panel = new JPanel();
+        JLabel filler=new JLabel("群聊列表");
+        filler.setHorizontalAlignment(JLabel.CENTER);
+        panel.setLayout(new GridLayout(1,1));
+        panel.add(filler);
+        return panel;
     }
 
 
