@@ -18,6 +18,7 @@ import java.util.List;
  */
 public class MyQQView extends JFrame {
     private UserRequest userRequest;
+    private User user;
     //当前用户的id
     private String userId;
     /**窗口**/
@@ -40,7 +41,7 @@ public class MyQQView extends JFrame {
     public MyQQView(String userId){
         this.userId = userId;
         //在管理用户信息类中拿到user全部信息
-        User user = ManageUser.getUser(userId);
+        this.user = ManageUser.getUser(userId);
         this.userRequest = new UserRequest(user);
         System.out.println(user);
         //设置窗口大小和位置
@@ -49,8 +50,8 @@ public class MyQQView extends JFrame {
         Dimension d=t.getScreenSize();
         frame.setBounds(d.width-250,0,250,500);
         frame.setIconImage((new ImageIcon("img/icon.jpg").getImage()));
+        //用户主窗口关闭逻辑 关闭通知服务器正常退出
         frame.addWindowListener(new WindowAdapter() {
-
             @Override
             public void windowClosing(WindowEvent e) {
                 //0表示Y 1表示N
@@ -85,6 +86,27 @@ public class MyQQView extends JFrame {
      */
     public JPanel north(){
         JPanel jPanel = new JPanel();
+        jPanel.setLayout(null);
+        jPanel.setPreferredSize(new Dimension(0,100));
+        //头像
+        ImageIcon ss=new ImageIcon(user.getAvatar());
+        JLabel cs=new JLabel(ss);
+        cs.setBounds(5,15,80,80);
+        //昵称
+        JLabel nameJLabel = new JLabel();
+        nameJLabel.setText(user.getUserName());
+        nameJLabel.setBounds(100,15,150,20);
+        nameJLabel.setFont(new Font("黑体",Font.BOLD,15));//字体和字体大小
+        JLabel signJLabel = new JLabel();
+        signJLabel.setText(user.getSignature());
+        signJLabel.setBounds(100,40,150,20);
+        signJLabel.setFont(new Font("黑体",Font.BOLD,15));//字体和字体大小
+        //个性签名
+
+        jPanel.add(cs);
+        jPanel.add(nameJLabel);
+        jPanel.add(signJLabel);
+
         return jPanel;
     }
 
