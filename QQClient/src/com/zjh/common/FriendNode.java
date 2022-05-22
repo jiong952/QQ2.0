@@ -49,4 +49,12 @@ public class FriendNode extends DefaultMutableTreeNode {
         }
         return new ImageIcon(buff);
     }
+
+    public Friend getFriend() {
+        return friend;
+    }
+
+    public void setFriend(Friend friend) {
+        this.friend = friend;
+    }
 }

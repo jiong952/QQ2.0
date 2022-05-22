@@ -1,5 +1,6 @@
 package com.zjh.client.view;
 
+import com.zjh.client.manage.ManageChatView;
 import com.zjh.client.manage.ManageUser;
 import com.zjh.client.request.FriendRequest;
 import com.zjh.client.request.UserRequest;
@@ -29,14 +30,14 @@ public class MyQQView extends JFrame {
     public static JScrollPane jsp;
     //好友列表结点
     //当前用户的id
-    private String userId;
+    public static String userId;
 
     /**窗口**/
     JFrame frame; //frame窗口
     /**面板**/
     JPanel northPanel;//北部面板
     public static JTabbedPane tab; //南部选项卡
-//    JPanel southPanel;//南部面板
+    JPanel southPanel;//南部面板
     /**按钮**/
     JButton updateInfoButton;//修改个人信息按钮 点击弹出UpdateInfoView
     JButton addFriendButton;//添加好友按钮 点击弹出SearchFriendView
@@ -80,9 +81,11 @@ public class MyQQView extends JFrame {
         frame.setResizable(false);
         //加入各部分面板
         northPanel = north();
-        tab= center();
+        tab = center();
+        southPanel = south();
         frame.add(northPanel,BorderLayout.NORTH);
         frame.add(tab,BorderLayout.CENTER);
+        frame.add(southPanel,BorderLayout.SOUTH);
         frame.setVisible(true);
     }
 
@@ -123,7 +126,7 @@ public class MyQQView extends JFrame {
 
 
     /**
-     * 南部选项卡
+     * 中部选项卡
      *
      * @return {@link JTabbedPane}
      */
@@ -133,6 +136,24 @@ public class MyQQView extends JFrame {
         tab.add("群聊列表",groupPanel());
         tab.setSelectedIndex(0);
         return tab;
+    }
+
+    /**
+     * 南部面板
+     *
+     * @return {@link JPanel}
+     */
+    public JPanel south(){
+        JPanel jPanel = new JPanel();
+        jPanel.setLayout(new GridLayout(1,2));
+        jPanel.setPreferredSize(new Dimension(0,30));
+        updateInfoButton = new JButton("个人信息");
+        updateInfoButton.setSize(40,20);
+        addFriendButton = new JButton("添加好友");
+        updateInfoButton.setSize(40,20);
+        jPanel.add(updateInfoButton);
+        jPanel.add(addFriendButton);
+        return jPanel;
     }
 
     /**
@@ -244,10 +265,31 @@ public class MyQQView extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 Object node = contacts_tree.getLastSelectedPathComponent();
+                FriendNode people = (FriendNode) node;
+                Friend friend1 = people.getFriend();
                 String str = node.toString();
                 if (!str.equals("我的好友") && !str.equals("黑名单") && !str.equals("陌生人") && e.getClickCount() == 2) {
-                    //todo 点击两次好友，弹出对话框
-                    JOptionPane.showMessageDialog(null,"和"+str+"聊天");
+                    //点击两次好友，弹出对话框
+                    //查看界面是否存在
+                    ChatView view = ManageChatView.getView(friend1.getFriendId());
+                    if(view != null){
+                        //窗口存在
+                        if(view.getFrame().isVisible()){
+                            //可见 弹出到最前面
+                            if(view.getFrame().getState() == JFrame.ICONIFIED){
+                                view.getFrame().setState(JFrame.NORMAL);
+                                view.getFrame().show();
+                            }
+                        }else {
+                            view.getFrame().setVisible(true);
+                            view.getFrame().setState(JFrame.NORMAL);
+                            view.getFrame().show();
+                        }
+                    }else {
+                        view = new ChatView(userId, friend1.getFriendId());
+                        ManageChatView.addView(friend1.getFriendId(),view);
+                    }
+
                 }
             }
 
