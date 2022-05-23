@@ -54,6 +54,9 @@ public class FriendDao {
                 if(friend.getSignature() == null){
                     friend.setSignature("");
                 }
+                if(friend.getRemark() == null){
+                    friend.setRemark("");
+                }
                 friend.setAvatar(FileUtils.readFile(friend.getAvatarPath()));
             }
         } catch (SQLException e) {

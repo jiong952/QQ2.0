@@ -171,10 +171,10 @@ public class ServerThread extends Thread{
                         flag = messageService.insertMsg(msg,false);
                     }
                     if(flag){
-                        //消息发送成功，返回给用户
+                        //文件发送成功，返回给用户
                         ObjectOutputStream oos = new ObjectOutputStream(thread2.getSocket().getOutputStream());
                         msg.setContent(msg.getFileName());
-                        msg.setMsgType(MessageType.SEND_SUCCESS);
+                        msg.setMsgType(MessageType.SEND_FILE_SUCCESS);
                         oos.writeObject(msg);
                     }
                 }else {
