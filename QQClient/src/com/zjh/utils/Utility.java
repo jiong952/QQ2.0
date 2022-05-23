@@ -1,5 +1,8 @@
 package com.zjh.utils;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.Scanner;
 
 public class Utility {
@@ -101,6 +104,26 @@ public class Utility {
             }
         }
         return line;
+    }
+    public static ImageIcon getGrayImage(ImageIcon icon){
+        int w=icon.getIconWidth();
+        int h=icon.getIconHeight();
+        BufferedImage buff=new BufferedImage(w,h,BufferedImage.TYPE_INT_ARGB);
+        Graphics g=buff.getGraphics();
+        g.drawImage(icon.getImage(),0,0,null);
+        for (int i=0;i<w;i++){
+            for(int j=0;j<h;j++){
+                int red,green,blue;
+                int pixel=buff.getRGB(i,j);
+                red=(pixel>>16)&0xFF;
+                green=(pixel>>8)&0xFF;
+                blue=(pixel>>0)&0xFF;
+                int sum=(red+green+blue)/3;
+                g.setColor(new Color(sum,sum,sum));
+                g.fillRect(i,j,1,1);
+            }
+        }
+        return new ImageIcon(buff);
     }
 }
 

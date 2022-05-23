@@ -10,6 +10,7 @@ import com.zjh.utils.FileUtils;
 import com.zjh.utils.Utility;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -32,6 +33,10 @@ public class ChatView extends JFrame {
     JPanel northPanel;//北部面板
     JPanel centerPanel;//中部面板
     JPanel southPanel;//南部面板
+    JTabbedPane eastPane; //东部面板
+    /**文本域**/
+    JTextArea chatArea; //聊天文本域
+    JTextArea sendArea; //发送文本域
     /**按钮**/
     JButton sendButton;//发送按钮
     JButton chatHisButton;//聊天记录按钮按钮
@@ -54,7 +59,7 @@ public class ChatView extends JFrame {
         frame = new JFrame("与 "+friend.getFriendName()+" ("+friend.getRemark()+") 聊天中......");
         Toolkit t=Toolkit.getDefaultToolkit();
         Dimension d=t.getScreenSize();
-        frame.setBounds((d.width-d.width/3)/2,(d.height-d.height/3)/2,650,600);
+        frame.setBounds((d.width-d.width/3)/2,(d.height-d.height/3)/2-200,650,600);
         frame.setIconImage((new ImageIcon("img/icon.jpg").getImage()));
         //隐藏聊天框
         frame.addWindowListener(new WindowAdapter() {
@@ -63,11 +68,118 @@ public class ChatView extends JFrame {
                 frame.setVisible(false);
             }
         });
-//        frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         frame.setResizable(false);
-        JPanel panel = new JPanel();
+        northPanel = north();
+        centerPanel = center();
+        eastPane = east();
+        southPanel = south();
+        frame.add(northPanel,BorderLayout.NORTH);
+        frame.add(centerPanel,BorderLayout.CENTER);
+        frame.add(southPanel,BorderLayout.SOUTH);
+        frame.add(eastPane,BorderLayout.EAST);
         //可见
         frame.setVisible(true);
+    }
+
+
+    /**
+     * 北部面板
+     *
+     * @return {@link JPanel}
+     */
+    public JPanel north(){
+        JPanel jPanel = new JPanel();
+        jPanel.setLayout(null);
+        jPanel.setPreferredSize(new Dimension(0,40));
+        //好友头像
+        JLabel cs=new JLabel();
+        cs.setBounds(260,5,30,30);
+        ImageIcon imageIcon=new ImageIcon(friend.getAvatar());
+        if(!friend.isOnLine()){
+            imageIcon = Utility.getGrayImage(imageIcon);
+        }
+        //设置缩放图片
+        imageIcon = new ImageIcon(imageIcon.getImage().getScaledInstance(cs.getWidth(),-1,Image.SCALE_DEFAULT));
+        cs.setIcon(imageIcon);
+        //昵称
+        JLabel nameJLabel = new JLabel();
+        nameJLabel.setText(friend.getFriendName());
+        nameJLabel.setBounds(300,5,100,15);
+        nameJLabel.setFont(new Font("黑体",Font.BOLD,10));//字体和字体大小
+        JLabel remarkJLabel = new JLabel();
+        remarkJLabel.setText("("+friend.getRemark()+")");
+        remarkJLabel.setBounds(300,22,100,15);
+        remarkJLabel.setFont(new Font("黑体",Font.BOLD,10));//字体和字体大小
+        remarkJLabel.setForeground(new Color(100,149,238));
+        jPanel.add(cs);
+        jPanel.add(nameJLabel);
+        jPanel.add(remarkJLabel);
+        //备注
+        return jPanel;
+    }
+
+    /**
+     * 中部滚动面板
+     *
+     * @return {@link JPanel}
+     */
+    public JPanel center(){
+        JPanel panel = new JPanel();
+        panel.setPreferredSize(new Dimension(450,400));
+        //使用append方法追加 \n
+        chatArea = new JTextArea();
+        chatArea.setEnabled(false);
+        chatArea.append(user.getUserName() + new Date() + "\n");
+        chatArea.append("  哈哈哈你好" + "\n");
+        chatArea.append(friend.getFriendName() + new Date() + "\n");
+        chatArea.append("  嗯嗯" + "\n");
+        chatArea.append(user.getUserName() + new Date() + "\n");
+        chatArea.append("  你吃了吗" + "\n");
+        JScrollPane jScrollPane = new JScrollPane(chatArea,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane.setPreferredSize(new Dimension(420,380));
+        jScrollPane.setBorder(new TitledBorder("聊天窗口"));
+        //封装
+        panel.add(jScrollPane);
+        return panel;
+    }
+
+    /**
+     * 文件选项卡
+     *
+     * @return {@link JTabbedPane}
+     */
+    public JTabbedPane east(){
+        JTabbedPane jTabbedPane = new JTabbedPane(JTabbedPane.BOTTOM);
+        jTabbedPane.setPreferredSize(new Dimension(200,0));
+        jTabbedPane.setBorder(new TitledBorder("接收文件"));
+        return jTabbedPane;
+    }
+
+    /**
+     * 南部聊天面板
+     *
+     * @return {@link JPanel}
+     */
+    public JPanel south(){
+        JPanel panel = new JPanel();
+        panel.setLayout(null);
+        panel.setPreferredSize(new Dimension(450,160));
+//        panel.setBorder(new TitledBorder("发送窗口"));
+        sendArea = new JTextArea();
+        sendArea.setLineWrap(true);
+        JScrollPane jScrollPane = new JScrollPane(sendArea,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane.setBounds(5,0,420,120);
+        jScrollPane.setBorder(new TitledBorder("发送窗口"));
+        chatHisButton = new JButton("聊天记录");
+        chatHisButton.setBounds(30,125,100,30);
+        sendButton = new JButton("发送");
+        sendButton.setBounds(330,125,80,30);
+        panel.add(jScrollPane);
+        panel.add(chatHisButton);
+        panel.add(sendButton);
+        return panel;
     }
 
     public void chat(){
@@ -121,5 +233,34 @@ public class ChatView extends JFrame {
     public void acceptFile(String desc,byte[] fileBytes,String fileName){
         FileUtils.storeFile(fileBytes,desc);
         System.out.println(fileName+ " 已保存到" + desc);
+    }
+
+    public Container getContainer(){
+        //封装
+        Container container=new Container();
+        container.setSize(400,30);
+        container.setLayout(null);
+        //头像
+        JLabel jLabel=new JLabel();
+        jLabel.setSize(30,30);
+        ImageIcon imageIcon = new ImageIcon(user.getAvatar());
+        imageIcon = new ImageIcon(imageIcon.getImage().getScaledInstance(jLabel.getWidth(),-1,Image.SCALE_DEFAULT));
+        jLabel.setIcon(imageIcon);
+        jLabel.setLocation(0,0);
+        container.add(jLabel);
+        //名字
+        JLabel jLabel1=new JLabel(user.getUserName() + "  " + new Date() ,SwingConstants.LEFT);
+        jLabel1.setSize(350,15);
+        jLabel1.setFont(new Font("黑体",Font.BOLD,10));
+        jLabel1.setLocation(40,0);
+        container.add(jLabel1);
+        //消息内容
+        JLabel jLabel2=new JLabel("这是一条消息哈哈哈哈哈",SwingConstants.LEFT);
+        jLabel2.setSize(350,15);
+        jLabel2.setFont(new Font("楷体",Font.BOLD,10));
+        jLabel2.setLocation(40,30);
+        container.add(jLabel2);
+        container.setVisible(true);
+        return container;
     }
 }
