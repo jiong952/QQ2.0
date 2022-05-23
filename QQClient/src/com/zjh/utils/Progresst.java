@@ -1,5 +1,8 @@
 package com.zjh.utils;
 
+import com.zjh.common.Friend;
+import com.zjh.common.Message;
+
 import javax.swing.*;
 
 /**
@@ -14,15 +17,21 @@ public class Progresst extends Thread
     JPanel panel;
     String path;
     byte[] fileBytes;
+    JTextArea chatArea;
+    Message message;
+    Friend friend;
     //进度条上的数字
     int[] progressValues={6,18,27,39,51,66,81,100};
-    public Progresst(JProgressBar progressBar,JTabbedPane jTabbedPane,JPanel panel,String path,byte[] fileBytes)
+    public Progresst(JProgressBar progressBar, JTabbedPane jTabbedPane, JPanel panel, String path, byte[] fileBytes, JTextArea chatArea, Message message, Friend friend)
     {
         this.progressBar=progressBar;
         this.jTabbedPane = jTabbedPane;
         this.panel = panel;
         this.path = path;
         this.fileBytes = fileBytes;
+        this.chatArea = chatArea;
+        this.message = message;
+        this.friend = friend;
     }
     public void run()
     {
@@ -52,5 +61,7 @@ public class Progresst extends Thread
         }
         jTabbedPane.remove(panel);
         JOptionPane.showMessageDialog(null,"文件已保存到"+path);
+        chatArea.append(friend.getFriendName() + "(" + friend.getRemark() + ")  " + message.getSendTime() + "\n");
+        chatArea.append(" " + message.getFileName() + "\n");
     }
 }

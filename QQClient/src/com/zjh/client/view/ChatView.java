@@ -33,8 +33,8 @@ public class ChatView extends JFrame {
     private MessageService messageService = new MessageService();
     private FriendRequest friendRequest = new FriendRequest();
     private FileService fileService = new FileService();
-    private User user;
-    private Friend friend;
+    User user;
+    Friend friend;
     /**
      * 窗口
      **/
@@ -77,6 +77,34 @@ public class ChatView extends JFrame {
     }
 
     public ChatView(String userId, String friendId) {
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.setBorderPainted(true);
+        JMenu chatHis = new JMenu("聊天记录");
+        JMenu friendUpdate = new JMenu("好友管理");
+        menuBar.add(chatHis);
+        JMenuItem backUp = new JMenuItem("备份记录到本地");
+        backUp.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                messageService.backUpChatHis(user.getUserId(),friend.getFriendId());
+            }
+        });
+        chatHis.add(backUp);
+        JMenuItem delete = new JMenuItem("删除聊天记录");
+        delete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int check = JOptionPane.showConfirmDialog(frame, "删除则无法找回！确认删除吗", "删除提示", 0);
+                if(check == 0){
+                    //通知服务器 同时把所有manage中的界面删除掉
+                    messageService.delChatHis(user.getUserId(),friend.getFriendId());
+                    chatArea.setText("");
+                    JOptionPane.showMessageDialog(null,"删除成功！");
+                }
+            }
+        });
+        chatHis.add(delete);
+        menuBar.add(friendUpdate);
         //初始化文件选择器
         initFileChooser();
         //初始化页面
@@ -110,6 +138,7 @@ public class ChatView extends JFrame {
         frame.add(centerPanel, BorderLayout.CENTER);
         frame.add(southPanel, BorderLayout.SOUTH);
         frame.add(eastPane, BorderLayout.EAST);
+        frame.setJMenuBar(menuBar);
         //可见
         frame.setVisible(true);
     }
@@ -164,7 +193,7 @@ public class ChatView extends JFrame {
         chatArea.setEnabled(false);
         chatArea.setDisabledTextColor(Color.black);
         JScrollPane jScrollPane = new JScrollPane(chatArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         jScrollPane.setPreferredSize(new Dimension(420, 380));
         jScrollPane.setBorder(new TitledBorder("聊天窗口"));
         //封装
@@ -207,6 +236,31 @@ public class ChatView extends JFrame {
         jScrollPane.setBorder(new TitledBorder("发送窗口"));
         chatHisButton = new JButton("聊天记录");
         chatHisButton.setBounds(30, 125, 90, 30);
+        chatHisButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sendArea.setText("");
+                // 清空聊天框 把所有聊天记录加进去
+                List<Message> list = new MessageService().getAllMsg(user.getUserId(), friend.getFriendId());
+                for (Message message : list) {
+                    if(message.getSenderId().equals(user.getUserId())){
+                        //自己发的
+                        if(message.getFileName() != null){
+                            sendSuccess(message,true);
+                        }else {
+                            sendSuccess(message,false);
+                        }
+                    }else {
+                        if(message.getFileName() != null){
+                            chatArea.append(friend.getFriendName() + "(" + friend.getRemark() + ")  " + message.getSendTime() + "\n");
+                            chatArea.append(" " + message.getFileName() + "\n");
+                        }else {
+                            receiveMsg(message);
+                        }
+                    }
+                }
+            }
+        });
         sendFileButton = new JButton("发送文件");
         sendFileButton.setBounds(150, 125, 90, 30);
         sendFileButton.addActionListener(new sendFileButtonHandler());
@@ -327,10 +381,9 @@ public class ChatView extends JFrame {
     public void sendSuccess(Message message, boolean isFile) {
         chatArea.append(user.getUserName() + "(我)  " + message.getSendTime() + "\n");
         if (isFile) {
-            chatArea.append(" 【" + message.getContent() + "】发送成功！\n");
+            chatArea.append(" 【" + message.getFileName() + "】发送成功！\n");
         } else {
             chatArea.append(" " + message.getContent() + "\n");
-
         }
     }
 
@@ -409,7 +462,7 @@ public class ChatView extends JFrame {
         acceptButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new Progresst(progressBar,jTabbedPane,panel,srcLabel_real.getText(),message.getFileBytes()).start();
+                new Progresst(progressBar,jTabbedPane,panel,srcLabel_real.getText(),message.getFileBytes(),chatArea,message,friend).start();
 
             }
         });

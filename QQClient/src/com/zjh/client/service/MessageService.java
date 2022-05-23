@@ -4,6 +4,7 @@ import com.zjh.client.manage.ManageClientConnectServerThread;
 import com.zjh.common.*;
 import com.zjh.utils.FileUtils;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -140,9 +141,6 @@ public class MessageService {
      */
     public boolean backUpChatHis(String myId,String friendId){
         boolean flag = false;
-        //保存文件到服务端本地
-//        String desc = "C:\\Users\\Mono\\Desktop\\用户文件暂存\\" + msg.getGetterId() +"_" + new Date().getTime() + "_" + msg.getFileName();
-//        FileUtils.storeFile(msg.getFileBytes(),desc);
         //获得聊天记录
         List<Message> allMsg = getAllMsg(myId, friendId);
         //查看文件夹是否存在，不存在就创建D:\用户聊天记录备份\a\zjh\时间戳
@@ -194,7 +192,7 @@ public class MessageService {
                             }
                         }
                     }
-                    System.out.println("聊天记录已备份在"+fileDirPath);
+                    JOptionPane.showMessageDialog(null,"聊天记录已备份在"+fileDirPath);
                 }
             }
         }
