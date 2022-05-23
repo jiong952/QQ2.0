@@ -12,8 +12,11 @@ import com.zjh.utils.Utility;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -129,12 +132,7 @@ public class ChatView extends JFrame {
         //使用append方法追加 \n
         chatArea = new JTextArea();
         chatArea.setEnabled(false);
-        chatArea.append(user.getUserName() + new Date() + "\n");
-        chatArea.append("  哈哈哈你好" + "\n");
-        chatArea.append(friend.getFriendName() + new Date() + "\n");
-        chatArea.append("  嗯嗯" + "\n");
-        chatArea.append(user.getUserName() + new Date() + "\n");
-        chatArea.append("  你吃了吗" + "\n");
+        chatArea.setDisabledTextColor(Color.black);
         JScrollPane jScrollPane = new JScrollPane(chatArea,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane.setPreferredSize(new Dimension(420,380));
@@ -165,7 +163,6 @@ public class ChatView extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(null);
         panel.setPreferredSize(new Dimension(450,160));
-//        panel.setBorder(new TitledBorder("发送窗口"));
         sendArea = new JTextArea();
         sendArea.setLineWrap(true);
         JScrollPane jScrollPane = new JScrollPane(sendArea,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -176,6 +173,8 @@ public class ChatView extends JFrame {
         chatHisButton.setBounds(30,125,100,30);
         sendButton = new JButton("发送");
         sendButton.setBounds(330,125,80,30);
+        //加入按钮事件
+        sendButton.addActionListener(new sendButtonHandler());
         panel.add(jScrollPane);
         panel.add(chatHisButton);
         panel.add(sendButton);
@@ -184,19 +183,19 @@ public class ChatView extends JFrame {
 
     public void chat(){
 //        // TODO: 2022-05-12 这个方法之后删掉，改为button的触发事件
-//        System.out.println("\n========="+userId+"(我)与"+friendId+"的私聊界面=========");
-//        System.out.print("请输入发送的内容：");
-//        String chatContent = Utility.readString(100); //聊天内容
-//        //先验证一下是不是好友
-//        boolean b = friendRequest.checkFriend(userId, friendId);
-//        if(!b){
-//            //被单删了
-//            // TODO: 2022-05-12 在这个页面写一个弹窗 先设置为不可见
-//            System.out.println("对方不是你的好友，请先添加好友");
-//        }else {
-//            //调用一个MessageClientService的发送消息
-//            messageService.privateChat(chatContent,userId,friendId);
-//        }
+        System.out.println("\n========="+user.getUserId()+"(我)与"+friend.getFriendId()+"的私聊界面=========");
+        System.out.print("请输入发送的内容：");
+        String chatContent = Utility.readString(100); //聊天内容
+        //先验证一下是不是好友
+        boolean b = friendRequest.checkFriend(user.getUserId(), friend.getFriendId());
+        if(!b){
+            //被单删了
+            // TODO: 2022-05-12 在这个页面写一个弹窗 先设置为不可见
+            System.out.println("对方不是你的好友，请先添加好友");
+        }else {
+            //调用一个MessageClientService的发送消息
+            messageService.privateChat(chatContent,user.getUserId(), friend.getFriendId());
+        }
     }
 
     /**
@@ -235,32 +234,48 @@ public class ChatView extends JFrame {
         System.out.println(fileName+ " 已保存到" + desc);
     }
 
-    public Container getContainer(){
-        //封装
-        Container container=new Container();
-        container.setSize(400,30);
-        container.setLayout(null);
-        //头像
-        JLabel jLabel=new JLabel();
-        jLabel.setSize(30,30);
-        ImageIcon imageIcon = new ImageIcon(user.getAvatar());
-        imageIcon = new ImageIcon(imageIcon.getImage().getScaledInstance(jLabel.getWidth(),-1,Image.SCALE_DEFAULT));
-        jLabel.setIcon(imageIcon);
-        jLabel.setLocation(0,0);
-        container.add(jLabel);
-        //名字
-        JLabel jLabel1=new JLabel(user.getUserName() + "  " + new Date() ,SwingConstants.LEFT);
-        jLabel1.setSize(350,15);
-        jLabel1.setFont(new Font("黑体",Font.BOLD,10));
-        jLabel1.setLocation(40,0);
-        container.add(jLabel1);
-        //消息内容
-        JLabel jLabel2=new JLabel("这是一条消息哈哈哈哈哈",SwingConstants.LEFT);
-        jLabel2.setSize(350,15);
-        jLabel2.setFont(new Font("楷体",Font.BOLD,10));
-        jLabel2.setLocation(40,30);
-        container.add(jLabel2);
-        container.setVisible(true);
-        return container;
+    /**
+     * 发送消息按钮处理程序
+     *
+     * @author 张俊鸿
+     * @date 2022/05/23
+     */
+    public class sendButtonHandler implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String sendContent = sendArea.getText();
+            //先验证一下是不是好友
+            boolean b = friendRequest.checkFriend(user.getUserId(), friend.getFriendId());
+            if(!b){
+                // 被单删了
+                // 2022-05-12 在这个页面写一个弹窗 先设置为不可见
+                JOptionPane.showMessageDialog(null,"对方不是您的好友！请先添加","错误",JOptionPane.ERROR_MESSAGE);
+            }else {
+                //调用一个MessageClientService的发送消息
+                messageService.privateChat(sendContent,user.getUserId(), friend.getFriendId());
+                //清空
+                sendArea.setText("");
+            }
+        }
+    }
+
+    /**
+     * 发送消息成功，把消息加到聊天框
+     *
+     * @param message 消息
+     */
+    public void sendSuccess(Message message){
+        chatArea.append(user.getUserName() +"(我)  "+ message.getSendTime() + "\n");
+        chatArea.append(" "+message.getContent()+ "\n");
+    }
+
+    /**
+     * 收到消息
+     *
+     * @param message 消息
+     */
+    public void receiveMsg(Message message){
+        chatArea.append(friend.getFriendName() +"("+friend.getRemark()+")  "+ message.getSendTime() + "\n");
+        chatArea.append(" "+message.getContent()+ "\n");
     }
 }
