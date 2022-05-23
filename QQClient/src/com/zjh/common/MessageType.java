@@ -25,4 +25,5 @@ public interface MessageType {
     String SEND_SUCCESS = "16";//消息发送成功
     String NEW_OFFLINE = "17"; //有好友下线了
     String SEND_SUCCESS_TO_ALL = "18";//群发成功
+    String SEND_FILE_SUCCESS = "19";//发送文件成功
 }

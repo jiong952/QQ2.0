@@ -169,7 +169,7 @@ public class MyQQView extends JFrame {
     }
 
     /**
-     * 群里面板
+     * 群聊面板
      *
      * @return {@link JPanel}
      */

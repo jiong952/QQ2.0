@@ -84,22 +84,22 @@ public class ClientConnectServerThread extends Thread{
                     ChatView view = ManageChatView.getView(msg.getSenderId());
                     if(view != null){
                         //窗口存在
-                        if(view.isVisible()){
-                            //可见，那就是被最小化了
-                            if(view.getExtendedState() == 1){
-                                //最小化
-                                // TODO: 2022-05-12 看看能不能做个最小化闪烁
+                        if(view.getFrame().isVisible()){
+                            //可见 弹出到最前面
+                            if(view.getFrame().getState() == JFrame.ICONIFIED){
+                                view.getFrame().setState(JFrame.NORMAL);
+                                view.getFrame().show();
                             }
+                        }else {
+                            view.getFrame().setVisible(true);
+                            view.getFrame().setState(JFrame.NORMAL);
+                            view.getFrame().show();
                         }
                     }else {
-                        //窗口不存在
-                        // TODO: 2022-05-12 提示音 弹窗
-                        view = new ChatView(msg.getGetterId(), msg.getSenderId());
+                        view = new ChatView(msg.getGetterId(),msg.getSenderId());
                         ManageChatView.addView(msg.getSenderId(),view);
-                        // TODO: 2022-05-12 设置为不可见
-                        System.out.println("\n========="+msg.getGetterId()+"(我)与"+msg.getSenderId()+"的私聊界面=========");
                     }
-                    view.getFile(msg);
+                    view.receiveFile(msg);
 
                 }else if(MessageType.MESSAGE_NEWS.equals(msg.getMsgType())){
                     //服务端推送的消息
@@ -151,7 +151,31 @@ public class ClientConnectServerThread extends Thread{
                         ManageChatView.addView(msg.getGetterId(),view);
                     }
                     //把消息加到聊天界面
-                    view.sendSuccess(msg);
+                    view.sendSuccess(msg,false);
+                }else if(MessageType.SEND_FILE_SUCCESS.equals(msg.getMsgType())){
+                    //发送文件成功
+                    //发送消息成功
+                    //查看界面是否存在
+                    ChatView view = ManageChatView.getView(msg.getGetterId());
+                    if(view != null){
+                        //窗口存在
+                        if(view.getFrame().isVisible()){
+                            //可见 弹出到最前面
+                            if(view.getFrame().getState() == JFrame.ICONIFIED){
+                                view.getFrame().setState(JFrame.NORMAL);
+                                view.getFrame().show();
+                            }
+                        }else {
+                            view.getFrame().setVisible(true);
+                            view.getFrame().setState(JFrame.NORMAL);
+                            view.getFrame().show();
+                        }
+                    }else {
+                        view = new ChatView(msg.getSenderId(),msg.getGetterId());
+                        ManageChatView.addView(msg.getGetterId(),view);
+                    }
+                    //把消息加到聊天界面
+                    view.sendSuccess(msg,true);
                 }else if(MessageType.SEND_SUCCESS_TO_ALL.equals(msg.getMsgType())){
                     //发送消息成功
                     System.out.println("群发给所有好友"+msg.getContent()+"成功");
