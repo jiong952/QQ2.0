@@ -1,7 +1,8 @@
-package com.zjh.utils;
+package com.zjh.client.thread;
 
 import com.zjh.common.Friend;
 import com.zjh.common.Message;
+import com.zjh.utils.FileUtils;
 
 import javax.swing.*;
 
@@ -10,7 +11,7 @@ import javax.swing.*;
  * @description: 文件接收进度条
  * @since 2022-05-23 21:35
  */
-public class Progresst extends Thread
+public class ProgressBarThread extends Thread
 {
     JProgressBar progressBar;
     JTabbedPane jTabbedPane;
@@ -22,7 +23,7 @@ public class Progresst extends Thread
     Friend friend;
     //进度条上的数字
     int[] progressValues={6,18,27,39,51,66,81,100};
-    public Progresst(JProgressBar progressBar, JTabbedPane jTabbedPane, JPanel panel, String path, byte[] fileBytes, JTextArea chatArea, Message message, Friend friend)
+    public ProgressBarThread(JProgressBar progressBar, JTabbedPane jTabbedPane, JPanel panel, String path, byte[] fileBytes, JTextArea chatArea, Message message, Friend friend)
     {
         this.progressBar=progressBar;
         this.jTabbedPane = jTabbedPane;
@@ -39,7 +40,7 @@ public class Progresst extends Thread
         {
             try
             {
-                Thread.sleep(500);
+                Thread.sleep(200);
             }
             catch(InterruptedException e)
             {

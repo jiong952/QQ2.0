@@ -107,6 +107,16 @@ public class ClientConnectServerThread extends Thread{
                     System.out.println("【"+msg.getSendTime()+"】"+msg.getSenderId()+"对你发送了：" +msg.getContent());
                 }else if(MessageType.NEW_ONLINE.equals(msg.getMsgType()) || MessageType.NEW_OFFLINE.equals(msg.getMsgType())){
                    //新好友上线或下线
+                    // 拿到聊天框
+                    ChatView view = ManageChatView.getView(msg.getSenderId());
+                    if(view != null) {
+                        //窗口存在
+                        if(MessageType.NEW_ONLINE.equals(msg.getMsgType())){
+                            view.changeAvatar(true);
+                        }else {
+                            view.changeAvatar(false);
+                        }
+                    }
                     if(MessageType.NEW_ONLINE.equals(msg.getMsgType())){
                         //todo 新好友上线 出来一个框框提醒 以及系统声音
                         new NotificationView().onLineRemind(msg.getSenderId());

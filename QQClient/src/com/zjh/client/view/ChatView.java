@@ -8,7 +8,7 @@ import com.zjh.common.Friend;
 import com.zjh.common.Message;
 import com.zjh.common.User;
 import com.zjh.utils.FileUtils;
-import com.zjh.utils.Progresst;
+import com.zjh.client.thread.ProgressBarThread;
 import com.zjh.utils.Utility;
 
 import javax.swing.*;
@@ -20,7 +20,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -71,6 +70,7 @@ public class ChatView extends JFrame {
     /**标签**/
     JLabel srcLabel; //另存路径
     JLabel srcLabel_real; //另存路径
+    JLabel avatar;// 用户头像
 
     public JFrame getFrame() {
         return frame;
@@ -154,15 +154,15 @@ public class ChatView extends JFrame {
         jPanel.setLayout(null);
         jPanel.setPreferredSize(new Dimension(0, 40));
         //好友头像
-        JLabel cs = new JLabel();
-        cs.setBounds(260, 5, 30, 30);
+        avatar = new JLabel();
+        avatar.setBounds(260, 5, 30, 30);
         ImageIcon imageIcon = new ImageIcon(friend.getAvatar());
         if (!friend.isOnLine()) {
             imageIcon = Utility.getGrayImage(imageIcon);
         }
         //设置缩放图片
-        imageIcon = new ImageIcon(imageIcon.getImage().getScaledInstance(cs.getWidth(), -1, Image.SCALE_DEFAULT));
-        cs.setIcon(imageIcon);
+        imageIcon = new ImageIcon(imageIcon.getImage().getScaledInstance(avatar.getWidth(), -1, Image.SCALE_DEFAULT));
+        avatar.setIcon(imageIcon);
         //昵称
         JLabel nameJLabel = new JLabel();
         nameJLabel.setText(friend.getFriendName());
@@ -173,7 +173,7 @@ public class ChatView extends JFrame {
         remarkJLabel.setBounds(300, 22, 100, 15);
         remarkJLabel.setFont(new Font("黑体", Font.BOLD, 10));//字体和字体大小
         remarkJLabel.setForeground(new Color(100, 149, 238));
-        jPanel.add(cs);
+        jPanel.add(avatar);
         jPanel.add(nameJLabel);
         jPanel.add(remarkJLabel);
         //备注
@@ -194,7 +194,7 @@ public class ChatView extends JFrame {
         chatArea.setDisabledTextColor(Color.black);
         JScrollPane jScrollPane = new JScrollPane(chatArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        jScrollPane.setPreferredSize(new Dimension(420, 380));
+        jScrollPane.setPreferredSize(new Dimension(420, 370));
         jScrollPane.setBorder(new TitledBorder("聊天窗口"));
         //封装
         panel.add(jScrollPane);
@@ -462,7 +462,7 @@ public class ChatView extends JFrame {
         acceptButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new Progresst(progressBar,jTabbedPane,panel,srcLabel_real.getText(),message.getFileBytes(),chatArea,message,friend).start();
+                new ProgressBarThread(progressBar,jTabbedPane,panel,srcLabel_real.getText(),message.getFileBytes(),chatArea,message,friend).start();
 
             }
         });
@@ -528,6 +528,17 @@ public class ChatView extends JFrame {
         builder.append(chars, start, longString.length() - start);
         builder.append("</html>");
         jLabel.setText(builder.toString());
+    }
+
+    public void changeAvatar(boolean isOnline){
+        // TODO: 2022-05-24 修改头像框颜色
+        ImageIcon imageIcon = new ImageIcon(friend.getAvatar());
+        if (!isOnline) {
+            imageIcon = Utility.getGrayImage(imageIcon);
+        }
+        //设置缩放图片
+        imageIcon = new ImageIcon(imageIcon.getImage().getScaledInstance(avatar.getWidth(), -1, Image.SCALE_DEFAULT));
+        avatar.setIcon(imageIcon);
     }
 }
 
