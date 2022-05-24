@@ -153,4 +153,30 @@ public class UserRequest {
         }
         return list;
     }
+
+    /**
+     * 查找用户
+     * @param userId 用户id
+     * @return {@link User}
+     */
+    public User searchUser(String userId){
+        User user = new User();
+        try {
+            socket = new Socket(InetAddress.getByName(StaticString.server_ip), StaticString.server_port);
+            //发送序列化用户对象
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            RequestMsg requestMsg = new RequestMsg();
+            //方法名和参数
+            requestMsg.setRequesterId(userId);
+            requestMsg.setContent("searchUser");
+            oos.writeObject(requestMsg);
+            //接收服务端响应的消息
+            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            ResponseMsg responseMsg = (ResponseMsg) ois.readObject();
+            user = (User)responseMsg.getReturnValue();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
 }

@@ -1,7 +1,9 @@
 package com.zjh.client.thread;
 
 import com.zjh.client.manage.ManageChatView;
+import com.zjh.client.manage.ManageFriendsVerifyView;
 import com.zjh.client.request.FriendRequest;
+import com.zjh.client.request.UserRequest;
 import com.zjh.client.view.ChatView;
 import com.zjh.client.view.MyQQView;
 import com.zjh.client.view.FriendsVerifyView;
@@ -9,6 +11,7 @@ import com.zjh.client.view.NotificationView;
 import com.zjh.common.Friend;
 import com.zjh.common.Message;
 import com.zjh.common.MessageType;
+import com.zjh.common.User;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -125,17 +128,37 @@ public class ClientConnectServerThread extends Thread{
                     List<Friend> allFriend = new FriendRequest().findAllFriend(msg.getGetterId());
                     MyQQView.refreshFriendList(allFriend);
                 }else if(MessageType.ASK_MAKE_FRIEND.equals(msg.getMsgType())){
+                    FriendsVerifyView view = ManageFriendsVerifyView.getView(msg.getGetterId());
+                    if(view != null){
+                        //窗口存在
+                        if(view.getFrame().isVisible()){
+                            //可见 弹出到最前面
+                            if(view.getFrame().getState() == JFrame.ICONIFIED){
+                                view.getFrame().setState(JFrame.NORMAL);
+                                view.getFrame().show();
+                            }
+                        }else {
+                            view.getFrame().setVisible(true);
+                            view.getFrame().setState(JFrame.NORMAL);
+                            view.getFrame().show();
+                        }
+                    }else {
+                        view = new FriendsVerifyView(msg.getGetterId());
+                        ManageFriendsVerifyView.addView(msg.getGetterId(),view);
+                    }
+                    User user = new UserRequest().searchUser(msg.getSenderId());
+                    view.receiveFri(user);
                     //好友申请
 //                    new FriendsVerifyView().addVerifyRecord(msg.getSenderId(),msg.getGetterId());
                 }else if(MessageType.SUCCESS_MAKE_FRIEND_TO_ASK.equals(msg.getMsgType())){
                     //申请好友成功
-                    new NotificationView().askMakeFriendSuccess(msg.getSenderId());
+                    JOptionPane.showMessageDialog(null,"用户"+msg.getSenderId()+"已同意你的好友申请，快去聊天吧~");
                     //刷新好友列表
                     List<Friend> allFriend = new FriendRequest().findAllFriend(msg.getGetterId());
                     MyQQView.refreshFriendList(allFriend);
                 }else if(MessageType.SUCCESS_MAKE_FRIEND_TO_PERMIT.equals(msg.getMsgType())){
                     //同意好友申请成功
-                    new NotificationView().permitMakeFriendSuccess(msg.getSenderId());
+                    JOptionPane.showMessageDialog(null,msg.getSenderId() + "已是你的好友，赶快开始聊天吧~");
                     //刷新好友列表
                     List<Friend> allFriend = new FriendRequest().findAllFriend(msg.getGetterId());
                     MyQQView.refreshFriendList(allFriend);
