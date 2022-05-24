@@ -71,6 +71,7 @@ public class ChatView extends JFrame {
     JLabel srcLabel; //另存路径
     JLabel srcLabel_real; //另存路径
     JLabel avatar;// 用户头像
+    JLabel remarkJLabel; //备注
 
     public JFrame getFrame() {
         return frame;
@@ -79,8 +80,8 @@ public class ChatView extends JFrame {
     public ChatView(String userId, String friendId) {
         JMenuBar menuBar = new JMenuBar();
         menuBar.setBorderPainted(true);
+        //聊天记录菜单项
         JMenu chatHis = new JMenu("聊天记录");
-        JMenu friendUpdate = new JMenu("好友管理");
         menuBar.add(chatHis);
         JMenuItem backUp = new JMenuItem("备份记录到本地");
         backUp.addActionListener(new ActionListener() {
@@ -103,6 +104,35 @@ public class ChatView extends JFrame {
                 }
             }
         });
+        //好友管理菜单项
+        JMenu friendUpdate = new JMenu("好友管理");
+        JMenuItem updateFriend = new JMenuItem("修改好友信息");
+        updateFriend.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // 弹出新界面 显示好友信息 同时提供备注文本框和星标单选框
+                new updateFriView(friend,user.getUserId());
+            }
+        });
+        JMenuItem deleteFriend = new JMenuItem("删除好友");
+        deleteFriend.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int check = JOptionPane.showConfirmDialog(frame, "删除好友会删除好友一切信息，请确认是否删除", "删除提示", 0);
+                if(check == 0){
+                    //通知服务器  单向删除好友
+                    friendRequest.deleteFriend(user.getUserId(),friend.getFriendId());
+                    //关闭聊天框 刷新好友列表
+                    frame.dispose();
+                    //更新好友列表
+                    List<Friend> allFriend = new FriendRequest().findAllFriend(user.getUserId());
+                    MyQQView.refreshFriendList(allFriend);
+                    JOptionPane.showMessageDialog(null,"删除成功！");
+                }
+            }
+        });
+        friendUpdate.add(updateFriend);
+        friendUpdate.add(deleteFriend);
         chatHis.add(delete);
         menuBar.add(friendUpdate);
         //初始化文件选择器
@@ -168,7 +198,7 @@ public class ChatView extends JFrame {
         nameJLabel.setText(friend.getFriendName());
         nameJLabel.setBounds(300, 5, 100, 15);
         nameJLabel.setFont(new Font("黑体", Font.BOLD, 10));//字体和字体大小
-        JLabel remarkJLabel = new JLabel();
+        remarkJLabel = new JLabel();
         remarkJLabel.setText("(" + friend.getRemark() + ")");
         remarkJLabel.setBounds(300, 22, 100, 15);
         remarkJLabel.setFont(new Font("黑体", Font.BOLD, 10));//字体和字体大小
@@ -275,22 +305,6 @@ public class ChatView extends JFrame {
         return panel;
     }
 
-    public void chat() {
-//        // TODO: 2022-05-12 这个方法之后删掉，改为button的触发事件
-        System.out.println("\n=========" + user.getUserId() + "(我)与" + friend.getFriendId() + "的私聊界面=========");
-        System.out.print("请输入发送的内容：");
-        String chatContent = Utility.readString(100); //聊天内容
-        //先验证一下是不是好友
-        boolean b = friendRequest.checkFriend(user.getUserId(), friend.getFriendId());
-        if (!b) {
-            //被单删了
-            // TODO: 2022-05-12 在这个页面写一个弹窗 先设置为不可见
-            System.out.println("对方不是你的好友，请先添加好友");
-        } else {
-            //调用一个MessageClientService的发送消息
-            messageService.privateChat(chatContent, user.getUserId(), friend.getFriendId());
-        }
-    }
 
     public void initFileChooser() {
         //读取桌面路径
@@ -301,34 +315,6 @@ public class ChatView extends JFrame {
         fileChooser.setCurrentDirectory(homeDirectory);
         fileChooser.setVisible(false);
     }
-
-
-    /**
-     * 收到文件信息
-     *
-     * @param msg 消息
-     */
-    public void getFile(Message msg) {
-        // TODO: 2022-05-12 右侧框显示发来的文件信息，提供按钮下载和拒收
-        //拿到文件信息
-        System.out.println("【" + msg.getSendTime() + "】" + msg.getSenderId() + "对你发送了：" + msg.getFileName());
-        // TODO: 2022-05-12 用户选择接收会弹出一个文件路径框，点击后将文件保存到对应路径
-        String desc = "D:\\" + msg.getGetterId() + "_" + new Date().getTime() + "_" + msg.getFileName();
-        acceptFile(desc, msg.getFileBytes(), msg.getFileName());
-    }
-
-    /**
-     * 这到时候是点击文件选择器的确定按钮后出发的动作
-     *
-     * @param desc      desc
-     * @param fileBytes 文件字节数
-     * @param fileName  文件名称
-     */
-    public void acceptFile(String desc, byte[] fileBytes, String fileName) {
-        FileUtils.storeFile(fileBytes, desc);
-        System.out.println(fileName + " 已保存到" + desc);
-    }
-
 
     public class sendButtonHandler implements ActionListener {
         @Override
@@ -530,6 +516,11 @@ public class ChatView extends JFrame {
         jLabel.setText(builder.toString());
     }
 
+    /**
+     * 改变头像颜色
+     *
+     * @param isOnline 在线
+     */
     public void changeAvatar(boolean isOnline){
         // TODO: 2022-05-24 修改头像框颜色
         ImageIcon imageIcon = new ImageIcon(friend.getAvatar());
@@ -539,6 +530,15 @@ public class ChatView extends JFrame {
         //设置缩放图片
         imageIcon = new ImageIcon(imageIcon.getImage().getScaledInstance(avatar.getWidth(), -1, Image.SCALE_DEFAULT));
         avatar.setIcon(imageIcon);
+    }
+
+    /**
+     * 改变备注
+     *
+     * @param remark 备注
+     */
+    public void changeRemark(String remark){
+        remarkJLabel.setText(remark);
     }
 }
 

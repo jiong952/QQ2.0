@@ -113,7 +113,7 @@ public class QQViewCommandLine {
                                         }
                                     }else {
                                         //窗口不存在
-                                        new ChatView(userId,getterId).chat();
+//                                        new ChatView(userId,getterId).chat();
                                     }
 
                                     break;
