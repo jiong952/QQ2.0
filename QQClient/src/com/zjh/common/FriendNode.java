@@ -14,8 +14,9 @@ public class FriendNode extends DefaultMutableTreeNode {
     private Friend friend;
 
     public FriendNode(Friend friend) {
+        //有备注显示备注
+        super(friend.getRemark().equals("") ? friend.getFriendName() : friend.getRemark());
         //文本框放昵称
-        super(friend.getFriendName());
         this.friend = friend;
     }
     public ImageIcon getImageIcon() {
