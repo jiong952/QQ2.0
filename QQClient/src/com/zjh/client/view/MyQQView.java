@@ -246,7 +246,13 @@ public class MyQQView extends JFrame {
                     setIcon(new ImageIcon(people.getImageIcon().getImage().getScaledInstance(30, 30,
                             JFrame.DO_NOTHING_ON_CLOSE)));
                     // 将好友的昵称字体设置得比类别更小
-                    setFont(new Font("宋体", Font.BOLD, 12));
+                    if(people.getFriend().isStar()){
+                        //星标好友
+                        setForeground(Color.red);
+                        setFont(new Font("宋体", Font.ITALIC, 13));
+                    }else {
+                        setFont(new Font("宋体", Font.BOLD, 12));
+                    }
                 } else {
                     setFont(new Font("宋体", Font.BOLD, 15));
                 }
