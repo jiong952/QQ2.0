@@ -1,4 +1,4 @@
-package com.zjh.client.view;
+package com.zjh.client.view.commandLine;
 
 import com.zjh.client.request.FriendRequest;
 import com.zjh.common.Friend;
@@ -11,11 +11,11 @@ import javax.swing.*;
  * @description: 修改对好友信息的页面
  * @since 2022-05-12 1:22
  */
-public class UpdateFriendView extends JFrame {
+public class UpdateFriendViewCommandLine extends JFrame {
     private FriendRequest friendRequest = new FriendRequest();
     private String userId;
 
-    public UpdateFriendView(String userId) {
+    public UpdateFriendViewCommandLine(String userId) {
         this.userId = userId;
     }
 

@@ -36,8 +36,9 @@ public class MyQQView extends JFrame {
     public static JTabbedPane tab; //南部选项卡
     JPanel southPanel;//南部面板
     /**按钮**/
-    JButton updateInfoButton;//修改个人信息按钮 点击弹出UpdateInfoView
-    JButton addFriendButton;//添加好友按钮 点击弹出SearchFriendView
+    JButton updateInfoButton;// 修改个人信息按钮 点击弹出UpdateInfoView
+    JButton addFriendButton;// 添加好友按钮 点击弹出SearchFriendView
+    JButton verifyButton; // 好友验证 点击弹出FriendsVerifyView
 
     public static void main(String[] args) {
         new MyQQView("123");
@@ -142,14 +143,29 @@ public class MyQQView extends JFrame {
      */
     public JPanel south(){
         JPanel jPanel = new JPanel();
-        jPanel.setLayout(new GridLayout(1,2));
+        jPanel.setLayout(new GridLayout(1,3));
         jPanel.setPreferredSize(new Dimension(0,30));
         updateInfoButton = new JButton("个人信息");
-        updateInfoButton.setSize(40,20);
+        updateInfoButton.setFont(new Font("黑体", Font.BOLD, 10));
+        updateInfoButton.setPreferredSize(new Dimension(20,30));
+//        updateInfoButton.setSize(40,20);
         addFriendButton = new JButton("添加好友");
-        updateInfoButton.setSize(40,20);
+        addFriendButton.setPreferredSize(new Dimension(20,30));
+        addFriendButton.setFont(new Font("黑体", Font.BOLD, 10));
+        addFriendButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new SearchFriView(userId);
+            }
+        });
+//        updateInfoButton.setSize(40,20);
+        verifyButton = new JButton("好友验证");
+        verifyButton.setPreferredSize(new Dimension(20,30));
+        verifyButton.setFont(new Font("黑体", Font.BOLD, 10));
+//        verifyButton.setSize(40,20);
         jPanel.add(updateInfoButton);
         jPanel.add(addFriendButton);
+        jPanel.add(verifyButton);
         return jPanel;
     }
 
@@ -268,10 +284,10 @@ public class MyQQView extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 Object node = contacts_tree.getLastSelectedPathComponent();
-                FriendNode people = (FriendNode) node;
-                Friend friend1 = people.getFriend();
                 String str = node.toString();
                 if (!str.equals("我的好友") && !str.equals("黑名单") && !str.equals("陌生人") && e.getClickCount() == 2) {
+                    FriendNode people = (FriendNode) node;
+                    Friend friend1 = people.getFriend();
                     //点击两次好友，弹出对话框
                     //查看界面是否存在
                     ChatView view = ManageChatView.getView(friend1.getFriendId());
@@ -301,8 +317,7 @@ public class MyQQView extends JFrame {
     }
 
     // 展开树的所有节点的方法
-    private static void expandAll(JTree tree, TreePath parent, boolean expand)
-    {
+    private static void expandAll(JTree tree, TreePath parent, boolean expand) {
         TreeNode node = (TreeNode) parent.getLastPathComponent();
         if (node.getChildCount() >= 0)
         {

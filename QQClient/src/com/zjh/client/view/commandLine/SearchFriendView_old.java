@@ -1,4 +1,4 @@
-package com.zjh.client.view;
+package com.zjh.client.view.commandLine;
 
 import com.zjh.client.request.FriendRequest;
 import com.zjh.client.request.UserRequest;
@@ -13,10 +13,10 @@ import java.util.List;
  * @description: 搜索用户界面
  * @since 2022-05-11 17:50
  */
-public class SearchFriendView extends JFrame {
+public class SearchFriendView_old extends JFrame {
     private String myId;
 
-    public SearchFriendView(String myId) {
+    public SearchFriendView_old(String myId) {
         this.myId = myId;
     }
 

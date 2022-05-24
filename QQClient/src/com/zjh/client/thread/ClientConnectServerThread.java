@@ -126,7 +126,7 @@ public class ClientConnectServerThread extends Thread{
                     MyQQView.refreshFriendList(allFriend);
                 }else if(MessageType.ASK_MAKE_FRIEND.equals(msg.getMsgType())){
                     //好友申请
-                    new FriendsVerifyView().addVerifyRecord(msg.getSenderId(),msg.getGetterId());
+//                    new FriendsVerifyView().addVerifyRecord(msg.getSenderId(),msg.getGetterId());
                 }else if(MessageType.SUCCESS_MAKE_FRIEND_TO_ASK.equals(msg.getMsgType())){
                     //申请好友成功
                     new NotificationView().askMakeFriendSuccess(msg.getSenderId());

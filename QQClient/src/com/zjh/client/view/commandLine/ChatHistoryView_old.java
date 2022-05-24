@@ -1,4 +1,4 @@
-package com.zjh.client.view;
+package com.zjh.client.view.commandLine;
 
 import com.zjh.client.service.MessageService;
 import com.zjh.common.Message;
@@ -12,11 +12,11 @@ import java.util.List;
  * @description: 聊天记录界面
  * @since 2022-05-13 0:22
  */
-public class ChatHistoryView extends JFrame {
+public class ChatHistoryView_old extends JFrame {
     private String userId;
     private String friendId;
 
-    public ChatHistoryView(String userId, String friendId) throws HeadlessException {
+    public ChatHistoryView_old(String userId, String friendId) throws HeadlessException {
         this.userId = userId;
         this.friendId = friendId;
     }

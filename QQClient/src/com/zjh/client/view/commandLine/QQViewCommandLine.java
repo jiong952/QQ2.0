@@ -150,7 +150,7 @@ public class QQViewCommandLine {
                                     new MyQQView(userId).refreshFriendList(allFriend22);
                                     System.out.print("请输入好友：");
                                     String msgHisFri = Utility.readString(20);
-                                    ChatHistoryView view2 = ManageChatHistoryView.getView(msgHisFri);
+                                    ChatHistoryView_old view2 = ManageChatHistoryView.getView(msgHisFri);
                                     if(view2 != null){
                                         //窗口存在
                                         if(view2.isVisible()){
@@ -163,7 +163,7 @@ public class QQViewCommandLine {
                                     }else {
                                         //窗口不存在
                                         // TODO: 2022-05-12 提示音 弹窗
-                                        view2 = new ChatHistoryView(userId,msgHisFri);
+                                        view2 = new ChatHistoryView_old(userId,msgHisFri);
                                         // TODO: 2022-05-12 设置为不可见
                                         System.out.println("\n========="+userId+"(我)与"+msgHisFri+"的聊天记录=========");
                                     }
@@ -194,10 +194,10 @@ public class QQViewCommandLine {
                                             break;
                                         }
                                     }
-                                    new UpdateFriendView(userId).update(updateFriend);
+//                                    new UpdateFriendView(userId).update(updateFriend);
                                     break;
                                 case "a":
-                                    new SearchFriendView(userId).searchUserById();
+                                    new SearchFriendView_old(userId).searchUserById();
                                     break;
                                 case "b":
                                     List<Friend> allFriendb = friendRequest.findAllFriend(userId);

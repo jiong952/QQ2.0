@@ -187,7 +187,6 @@ public class updateFriView extends JFrame {
 
 
         this.friend = friend;
-        System.out.println(friend);
         //设置窗口大小和位置
         frame = new JFrame("修改好友信息");
         Toolkit t = Toolkit.getDefaultToolkit();
