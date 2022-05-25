@@ -64,7 +64,7 @@ public class FriendDao {
 
     /**
      * 添加好友之前检查是否已经是好友
-     *
+     * 检查两条记录
      * @param myId 用户id
      * @param friendId 好友Id
      * @return boolean true表示好友
@@ -72,10 +72,13 @@ public class FriendDao {
     public boolean checkFriend(String myId,String friendId){
         boolean flag = false;
         String sql = "SELECT `id` FROM `friend` WHERE `my_id` = ? AND `friend_id` = ?";
+        String sql2 = "SELECT `id` FROM `friend` WHERE `my_id` = ? AND `friend_id` = ?";
         Object[] params = {myId,friendId};
+        Object[] params2 = {friendId,myId};
         try {
             Map<String, Object> query = queryRunner.query(sql, new MapHandler(), params);
-            if(query != null){
+            Map<String, Object> query2 = queryRunner.query(sql2, new MapHandler(), params2);
+            if(query != null && query2!= null){
                 //是好友
                 flag = true;
             }

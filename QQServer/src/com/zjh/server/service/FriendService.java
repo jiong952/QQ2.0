@@ -42,8 +42,8 @@ public class FriendService {
         List<Friend> list = null;
         //正常好友
         list = friendDao.findAllFriend(userId);
-        List<String> ids = friendDao.getDelMeFriend(userId);
-        List<Friend> delMeFriends = userDao.findAllFriend(ids);
+//        List<String> ids = friendDao.getDelMeFriend(userId);
+//        List<Friend> delMeFriends = userDao.findAllFriend(ids);
         //从在线的所有好友中进行过滤，设置friend的isOnline字段
         HashMap<String, ServerThread> map = ManageServerConnectClientThread.getMap();
         for (Friend friend : list) {
@@ -53,7 +53,7 @@ public class FriendService {
             }
         }
         //被删除的人还是可以看到好友的，这是不能发送消息
-        list.addAll(delMeFriends);
+//        list.addAll(delMeFriends);
         return list;
     }
 
@@ -127,20 +127,22 @@ public class FriendService {
         //判断是好友,是好友则是单删，不是好友则是删回去
         boolean b2 = checkFriend(myId, friendId);
         if(b2){
-            //删除两条好友记录
+            //删除好友记录
             boolean b = friendDao.deleteFriendRecord(myId, friendId);
-            boolean b1 = friendDao.deleteFriendRecord(friendId, myId);
+//            boolean b1 = friendDao.deleteFriendRecord(friendId, myId);
             //插入一条删除记录
             boolean c = friendDao.insertDelFriendRecord(myId, friendId);
             //把消息表中对应消息的字段改为1
             messageDao.updateDel(myId, friendId);
-            if(b&&b1&&c) flag = true;
+            if(b&&c) flag = true;
         }else {
+            //删除好友记录
+            boolean b1 = friendDao.deleteFriendRecord(myId, friendId);
             //删除掉删除记录，彻底删除好友关系
             boolean b = friendDao.delDelFriendRecord(friendId, myId);
             //清空消息记录
             messageDao.clearMsg(myId, friendId);
-            if(b) flag = true;
+            if(b&&b1) flag = true;
         }
         return flag;
     }

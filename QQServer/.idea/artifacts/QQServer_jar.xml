@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="QQServer:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/QQServer_jar</output-path>
+    <root id="archive" name="QQServer.jar">
+      <element id="module-output" name="QQServer" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/TiliTili-master/out/lib/commons-dbutils-1.7.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/TiliTili-master/out/lib/mysql-connector-java-8.0.21.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/junit/junit/4.13.1/junit-4.13.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
