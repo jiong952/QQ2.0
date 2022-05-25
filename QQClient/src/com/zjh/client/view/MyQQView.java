@@ -207,6 +207,7 @@ public class MyQQView extends JFrame {
      */
     public JScrollPane friendPanel(){
         List<Friend> friendList = friendRequest.findAllFriend(userId);
+        System.out.println(friendList);
         JTree jTree = getJTree(friendList);
         //默认展开所有结点
         expandAll(jTree,new TreePath(jTree.getModel().getRoot()),true);

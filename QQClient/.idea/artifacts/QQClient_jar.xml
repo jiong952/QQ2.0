@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="QQClient:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/QQClient_jar</output-path>
+    <root id="archive" name="QQClient.jar">
+      <element id="module-output" name="QQClient" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/forms-1.2.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
