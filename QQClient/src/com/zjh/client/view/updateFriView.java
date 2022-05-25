@@ -135,7 +135,7 @@ public class updateFriView extends JFrame {
         label17.setForeground(new Color(-16777216));
         label17.setText("成为好友：");
         panel.add(label17, cc.xy(1, 13, CellConstraints.CENTER, CellConstraints.DEFAULT));
-        remarkField = new JTextField();
+        remarkField = new JTextField(10);
         remarkField.setText(friend.getRemark());
         panel.add(remarkField, cc.xy(5, 9, CellConstraints.LEFT, CellConstraints.DEFAULT));
         isStarBox = new JCheckBox();

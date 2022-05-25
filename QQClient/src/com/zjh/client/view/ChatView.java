@@ -269,7 +269,7 @@ public class ChatView extends JFrame {
         chatHisButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                sendArea.setText("");
+                chatArea.setText("");
                 // 清空聊天框 把所有聊天记录加进去
                 List<Message> list = new MessageService().getAllMsg(user.getUserId(), friend.getFriendId());
                 for (Message message : list) {

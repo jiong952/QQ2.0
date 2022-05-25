@@ -1,6 +1,7 @@
 package com.zjh.client.view;
 
 import com.zjh.client.manage.ManageChatView;
+import com.zjh.client.manage.ManageFriendsVerifyView;
 import com.zjh.client.manage.ManageUser;
 import com.zjh.client.request.FriendRequest;
 import com.zjh.client.request.UserRequest;
@@ -145,9 +146,15 @@ public class MyQQView extends JFrame {
         JPanel jPanel = new JPanel();
         jPanel.setLayout(new GridLayout(1,3));
         jPanel.setPreferredSize(new Dimension(0,30));
-        updateInfoButton = new JButton("个人信息");
+        updateInfoButton = new JButton("群发消息");
         updateInfoButton.setFont(new Font("黑体", Font.BOLD, 10));
         updateInfoButton.setPreferredSize(new Dimension(20,30));
+        updateInfoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new sendToAllView(userId);
+            }
+        });
 //        updateInfoButton.setSize(40,20);
         addFriendButton = new JButton("添加好友");
         addFriendButton.setPreferredSize(new Dimension(20,30));
@@ -162,6 +169,30 @@ public class MyQQView extends JFrame {
         verifyButton = new JButton("好友验证");
         verifyButton.setPreferredSize(new Dimension(20,30));
         verifyButton.setFont(new Font("黑体", Font.BOLD, 10));
+        verifyButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //好友申请
+                FriendsVerifyView view = ManageFriendsVerifyView.getView(userId);
+                if(view != null){
+                    //窗口存在
+                    if(view.getFrame().isVisible()){
+                        //可见 弹出到最前面
+                        if(view.getFrame().getState() == JFrame.ICONIFIED){
+                            view.getFrame().setState(JFrame.NORMAL);
+                            view.getFrame().show();
+                        }
+                    }else {
+                        view.getFrame().setVisible(true);
+                        view.getFrame().setState(JFrame.NORMAL);
+                        view.getFrame().show();
+                    }
+                }else {
+                    view = new FriendsVerifyView(userId);
+                    ManageFriendsVerifyView.addView(userId,view);
+                }
+            }
+        });
 //        verifyButton.setSize(40,20);
         jPanel.add(updateInfoButton);
         jPanel.add(addFriendButton);
@@ -218,14 +249,15 @@ public class MyQQView extends JFrame {
     public static JTree getJTree(List<Friend> allFriend){
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
         DefaultMutableTreeNode friend = new DefaultMutableTreeNode("我的好友");
-        DefaultMutableTreeNode stranger = new DefaultMutableTreeNode("陌生人");
-        DefaultMutableTreeNode blacklist = new DefaultMutableTreeNode("黑名单");
+        DefaultMutableTreeNode starlist = new DefaultMutableTreeNode("星标好友");
         root.add(friend);
-        root.add(stranger);
-        root.add(blacklist);
+        root.add(starlist);
         for (Friend friend1 : allFriend) {
-            // TODO: 2022-05-22 先不区分黑名单 后续拓展
-            friend.add(new FriendNode(friend1));
+            if(friend1.isStar()){
+                starlist.add(new FriendNode(friend1));
+            }else {
+                friend.add(new FriendNode(friend1));
+            }
         }
         DefaultTreeModel defaultTreeModel = new DefaultTreeModel(root);
         JTree contacts_tree = new JTree();
@@ -255,7 +287,7 @@ public class MyQQView extends JFrame {
                 }
                 //设置二级列表
                 String str = value.toString();
-                if (!str.equals("我的好友") && !str.equals("黑名单") && !str.equals("陌生人")) {
+                if (!str.equals("我的好友") && !str.equals("星标好友")) {
                     DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
                     FriendNode people = (FriendNode) node;
                     // 根据不同的好友对象设置他们的头像
@@ -285,7 +317,7 @@ public class MyQQView extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 Object node = contacts_tree.getLastSelectedPathComponent();
                 String str = node.toString();
-                if (!str.equals("我的好友") && !str.equals("黑名单") && !str.equals("陌生人") && e.getClickCount() == 2) {
+                if (!str.equals("我的好友") && !str.equals("星标好友") && e.getClickCount() == 2) {
                     FriendNode people = (FriendNode) node;
                     Friend friend1 = people.getFriend();
                     //点击两次好友，弹出对话框

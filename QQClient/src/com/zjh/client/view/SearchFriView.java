@@ -41,7 +41,7 @@ public class SearchFriView extends JFrame {
         frame = new JFrame("搜索好友");
         Toolkit t = Toolkit.getDefaultToolkit();
         Dimension d = t.getScreenSize();
-        frame.setBounds((d.width - d.width / 3) / 2, (d.height - d.height / 3) / 2 - 200, 500, 600);
+        frame.setBounds((d.width - d.width / 3) / 2, (d.height - d.height / 3) / 2, 500, 600);
         frame.setIconImage((new ImageIcon("img/icon.jpg").getImage()));
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

@@ -128,21 +128,9 @@ public class ClientConnectServerThread extends Thread{
                     List<Friend> allFriend = new FriendRequest().findAllFriend(msg.getGetterId());
                     MyQQView.refreshFriendList(allFriend);
                 }else if(MessageType.ASK_MAKE_FRIEND.equals(msg.getMsgType())){
+                    //好友申请
                     FriendsVerifyView view = ManageFriendsVerifyView.getView(msg.getGetterId());
-                    if(view != null){
-                        //窗口存在
-                        if(view.getFrame().isVisible()){
-                            //可见 弹出到最前面
-                            if(view.getFrame().getState() == JFrame.ICONIFIED){
-                                view.getFrame().setState(JFrame.NORMAL);
-                                view.getFrame().show();
-                            }
-                        }else {
-                            view.getFrame().setVisible(true);
-                            view.getFrame().setState(JFrame.NORMAL);
-                            view.getFrame().show();
-                        }
-                    }else {
+                    if(view == null){
                         view = new FriendsVerifyView(msg.getGetterId());
                         ManageFriendsVerifyView.addView(msg.getGetterId(),view);
                     }
