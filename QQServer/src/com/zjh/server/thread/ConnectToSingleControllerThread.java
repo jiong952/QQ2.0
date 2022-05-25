@@ -207,6 +207,13 @@ public class ConnectToSingleControllerThread {
                             messageService.insertMsg(msg,false);
                         }
                         break;
+                    case "searchUser":
+                        String searchId = requestMsg.getRequesterId();
+                        User user1 = userService.searchUser(searchId);
+                        ResponseMsg responseMsg50 = new ResponseMsg();
+                        responseMsg50.setReturnValue(user1);
+                        oos.writeObject(responseMsg50);
+                        break;
                     case "permitMakeFriend":
                         //用户同意好友请求
                         String myId2 = requestMsg.getRequesterId();
@@ -269,6 +276,7 @@ public class ConnectToSingleControllerThread {
                         //响应
                         ResponseMsg responseMsg7 = new ResponseMsg();
                         responseMsg7.setReturnValue(allMsg);
+                        System.out.println(allMsg);
                         oos.writeObject(responseMsg7);
                         break;
                     case "updateDel":

@@ -20,11 +20,7 @@ import java.util.Map;
  */
 public class FriendDao {
     public static void main(String[] args) {
-//        System.out.println(new FriendDao().checkFriend("a", "zjh"));
-//        new FriendDao().addFriend("s","a",true,new Date());
-//        System.out.println(new FriendDao().findAllFriend("a"));
-//        System.out.println(new FriendDao().delDelFriendRecord("jj", "s"));
-//        System.out.println(new FriendDao().getDelMeFriend("s"));
+
     }
 
 
@@ -187,6 +183,14 @@ public class FriendDao {
         }
         return ids;
     }
+
+    /**
+     * 更新朋友信息
+     *
+     * @param userId 用户id
+     * @param friend 朋友
+     * @return boolean
+     */
     public boolean updateFriend(String userId,Friend friend){
         boolean flag = false;
         Object[] params = {friend.getRemark(),friend.isStar(),userId,friend.getFriendId()};

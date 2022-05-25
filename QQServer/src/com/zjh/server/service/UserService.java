@@ -27,6 +27,16 @@ public class UserService {
     }
 
     /**
+     * 搜搜用户
+     * @param userId 用户id
+     * @return {@link User}
+     */
+    public User searchUser(String userId){
+        User check = userDao.check(userId);
+        return check;
+    }
+
+    /**
      * 模糊查询到数据库搜索用户
      *
      * @param userId 用户id
